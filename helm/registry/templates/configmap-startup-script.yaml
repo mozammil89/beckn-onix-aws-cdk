@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.name" . }}-startup-script
+  namespace: {{ .Values.namespace }}
+data:
+  service-start: |
+    #!/bin/sh
+    crond -bS;
+    /usr/bin/java -Xmx4g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=tmp/java.hprof -XX:-OmitStackTraceInFastThrow -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=3000, -DPORT=3030 -Dswf.env=development -Dswf.pidfile=tmp/pid -Dderby.locks.waitTimeout=10 -DSystem.out.close=true -DSystem.err.close=true -DSystem.in.close=true -cp overrideProperties/:target/classes/:target/dependency/registry.plugin-1.0-SNAPSHOT.jar:target/dependency/swf-plugin-collab-2.13-SNAPSHOT.jar:target/dependency/swf-plugin-templates-2.11.jar:target/dependency/swf-plugin-mail-2.12-SNAPSHOT.jar:target/dependency/sdk-1.4-SNAPSHOT.jar:target/dependency/common-1.19-SNAPSHOT.jar:target/dependency/swf-plugin-tailwind-1.0-SNAPSHOT.jar:target/dependency/swf-2.15-SNAPSHOT.jar:target/dependency/swf-db-2.13-SNAPSHOT.jar:target/dependency/reflection-1.16-SNAPSHOT.jar:target/dependency/swf-db-io-xml-2.11.jar:target/dependency/swf-db-io-json-2.11.jar:target/dependency/swf-db-io-xls-2.11.jar:target/dependency/* com.venky.swf.JettyServer
