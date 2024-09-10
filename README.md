@@ -2,10 +2,10 @@
 
 This repository contains Helm charts for deploying the Beckn-ONIX services on AWS using the AWS CDK framework. The charts are designed to deploy the following applications:
 
-- **Registry**: Manages Beckn service providers and categories.
+- **Registry**: Manages Beckn service providers and categories, and provides an additional layer of trust on the network by listing platforms that are compliant to a network’s rules and policies.
 - **Gateway**: Central point for routing Beckn messages between providers and participants.
-- **BAP (Beckn Application Platform)**: Allows providers to advertise their services to participants.
-- **BPP (Beckn Provider Platform)**: Handles the processing of Beckn messages on behalf of providers and participants.
+- **BAP (Beckn Application Platform)**: A consumer-facing infrastructure which captures consumers’ requests via its UI applications, converts them into beckn-compliant schemas and APIs at the server side, and fires them at the network.
+- **BPP (Beckn Provider Platform)**: Other side of the network is the supply side which consists of Beckn Provider Platforms (BPPs) that maintain an active inventory, one or more catalogs of products and services, implement the supply logic and enable fulfillment of orders.
 
 ## Prerequisites
 
@@ -19,12 +19,12 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 | Name                          | Description                             | Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
-| `externalDomain`               | External domain for the Registry service | `registry.beckn-onix-aws-cdk.becknprotocol.io`        |
-| `database.host`                | PostgreSQL database host                 | `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
+| `externalDomain`               | External domain for the Registry service | e.g. `registry.beckn-onix-aws-cdk.becknprotocol.io`        |
+| `database.host`                | PostgreSQL database host                 | e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
 | `database.dbname`              | PostgreSQL database name                 | `registry`                                            |
 | `database.username`            | PostgreSQL database username             | `postgres`                                            |
 | `database.password`            | PostgreSQL database password             | `becknonix123`                                        |
-| `ingress.tls.certificateArn`   | ARN for the TLS certificate              | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
+| `ingress.tls.certificateArn`   | ARN for the TLS certificate              | e.g. `arn:aws:acm:region:account-id:certificate/certificate-id` |
 
 ---
 
@@ -32,13 +32,13 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 | Name                          | Description                             | Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
-| `externalDomain`               | External domain for the Gateway service | `gateway.beckn-onix-aws-cdk.becknprotocol.io`         |
-| `registry_url`                 | Registry URL for Beckn services          | `https://registry.beckn-onix-aws-cdk.becknprotocol.io`|
-| `database.host`                | PostgreSQL database host                 | `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
+| `externalDomain`               | External domain for the Gateway service | e.g. `gateway.beckn-onix-aws-cdk.becknprotocol.io`         |
+| `registry_url`                 | Registry URL for Beckn services          | e.g. `https://registry.beckn-onix-aws-cdk.becknprotocol.io`|
+| `database.host`                | PostgreSQL database host                 | e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
 | `database.dbname`              | PostgreSQL database name                 | `gateway`                                             |
 | `database.username`            | PostgreSQL database username             | `postgres`                                            |
 | `database.password`            | PostgreSQL database password             | `becknonix123`                                        |
-| `ingress.tls.certificateArn`   | ARN for the TLS certificate              | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
+| `ingress.tls.certificateArn`   | ARN for the TLS certificate              | e.g. `arn:aws:acm:region:account-id:certificate/certificate-id` |
 
 ---
 
@@ -46,12 +46,12 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 | Name                                      | Description                                        | Value                                               |
 | ----------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
-| `global.externalDomain`                   | External domain for the BAP/BPP network service     | `bap-network.beckn-onix-aws-cdk.becknprotocol.io` (BAP), `bpp-network.beckn-onix-aws-cdk.becknprotocol.io` (BPP) |
-| `global.registry_url`                     | Registry URL for Beckn services                    | `https://registry.beckn-onix-aws-cdk.becknprotocol.io` |
+| `global.externalDomain`                   | External domain for the BAP/BPP network service     | e.g. `bap-network.beckn-onix-aws-cdk.becknprotocol.io` (BAP), e.g. `bpp-network.beckn-onix-aws-cdk.becknprotocol.io` (BPP) |
+| `global.registry_url`                     | Registry URL for Beckn services                    | e.g. `https://registry.beckn-onix-aws-cdk.becknprotocol.io` |
 | `global.responseCacheMongo.username`      | MongoDB username for response caching              | `root`                                              |
-| `global.responseCacheMongo.password`      | MongoDB password for response caching              | `ImYeQLeqwE` (BAP), `3jEGFUgZgC` (BPP)              |
+| `global.responseCacheMongo.password`      | MongoDB password for response caching              |
 | `global.rabbitMQamqp.password`            | RabbitMQ AMQP password for message processing      | `beckn123`                                          |
-| `global.ingress.tls.certificateArn`       | ARN for the TLS certificate                        | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
+| `global.ingress.tls.certificateArn`       | ARN for the TLS certificate                        | e.g. `arn:aws:acm:region:account-id:certificate/certificate-id` |
 
 
 ## Installing the Charts
@@ -65,7 +65,7 @@ helm install registry . \
   --set externalDomain=registry.beckn-onix-aws-cdk.becknprotocol.io \
   --set registry_url=https://<registry_domain> \
   --set database.host=<database_hostname> \
-  --set database.password=<db_password>3 \
+  --set database.password=<db_password> \
   --set ingress.tls.certificateArn="arn:aws:acm:region:account-id:certificate/certificate-id"
 ```
 ### Beckn-ONIX Gateway
@@ -85,8 +85,7 @@ helm install gateway . \
 helm install beckn-onix-bap . \
   --set global.externalDomain=bap-network.beckn-onix-aws-cdk.becknprotocol.io \
   --set global.registry_url=https://<registry_domain> \
-  --set global.responseCacheMongo.username="root" \
-  --set global.responseCacheMongo.password="ImYeQLeqwE" \
+  --set global.responseCacheMongo.password="<password>" \
   --set global.rabbitMQamqp.password="beckn123" \
   --set global.ingress.tls.certificateArn="arn:aws:acm:region:account-id:certificate/certificate-id"
 ```
@@ -97,8 +96,7 @@ helm install beckn-onix-bap . \
 helm install beckn-onix-bpp . \
   --set global.externalDomain=bpp-network.beckn-onix-aws-cdk.becknprotocol.io \
   --set global.registry_url=https://<registry_domain> \
-  --set global.responseCacheMongo.username="root" \
-  --set global.responseCacheMongo.password="3jEGFUgZgC" \
+  --set global.responseCacheMongo.password="<password>" \
   --set global.rabbitMQamqp.password="beckn123" \
   --set global.ingress.tls.certificateArn="arn:aws:acm:region:account-id:certificate/certificate-id"
 ```
