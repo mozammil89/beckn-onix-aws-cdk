@@ -20,7 +20,8 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 | Name                          | Description                             | Default Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
 | `externalDomain`               | External domain for the Registry service, e.g. `registry.beckn-onix-aws-cdk.becknprotocol.io`|           |
-| `database.host`                | PostgreSQL database host, e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com`|          |
+| `database.host`                | PostgreSQL database host, 
+e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com`|          |
 | `database.dbname`              | PostgreSQL database name                 | `registry`                                            |
 | `database.username`            | PostgreSQL database username             | `postgres`                                            |
 | `database.password`            | PostgreSQL database password             |                                         |
