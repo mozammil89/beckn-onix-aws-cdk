@@ -15,21 +15,11 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 ## Helm Parameters
 
-### Global Parameters
-
-| Name                                      | Description                                        | Default Value                               |
-| ----------------------------------------- | -------------------------------------------------- | ------------------------------------------- |
-| `global.imageRegistry`                    | Global Docker image registry                       | `""`                                        |
-| `global.imagePullSecrets`                 | Global Docker registry secret names as an array    | `[]`                                        |
-
----
-
 ### Registry Parameters
 
 | Name                          | Description                             | Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
 | `externalDomain`               | External domain for the Registry service | `registry.beckn-onix-aws-cdk.becknprotocol.io`        |
-| `registry_url`                 | Registry URL for Beckn services          | `https://registry.beckn-onix-aws-cdk.becknprotocol.io`|
 | `database.host`                | PostgreSQL database host                 | `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
 | `database.dbname`              | PostgreSQL database name                 | `registry`                                            |
 | `database.username`            | PostgreSQL database username             | `postgres`                                            |
