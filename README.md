@@ -17,14 +17,14 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 ### Registry Parameters
 
-| Name                          | Description                             | Value                                                |
+| Name                          | Description                             | Default Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
-| `externalDomain`               | External domain for the Registry service | e.g. `registry.beckn-onix-aws-cdk.becknprotocol.io`        |
-| `database.host`                | PostgreSQL database host                 | e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
+| `externalDomain`               | External domain for the Registry service, e.g. `registry.beckn-onix-aws-cdk.becknprotocol.io` |         |
+| `database.host`                | PostgreSQL database host, e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com`                |  |
 | `database.dbname`              | PostgreSQL database name                 | `registry`                                            |
 | `database.username`            | PostgreSQL database username             | `postgres`                                            |
-| `database.password`            | PostgreSQL database password             | `becknonix123`                                        |
-| `ingress.tls.certificateArn`   | ARN for the TLS certificate              | e.g. `arn:aws:acm:region:account-id:certificate/certificate-id` |
+| `database.password`            | PostgreSQL database password             |                                         |
+| `ingress.tls.certificateArn`   | ARN for the TLS certificate, e.g. `arn:aws:acm:region:account-id:certificate/certificate-id`              |  |
 
 ---
 
@@ -32,13 +32,13 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 | Name                          | Description                             | Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
-| `externalDomain`               | External domain for the Gateway service | e.g. `gateway.beckn-onix-aws-cdk.becknprotocol.io`         |
-| `registry_url`                 | Registry URL for Beckn services          | e.g. `https://registry.beckn-onix-aws-cdk.becknprotocol.io`|
-| `database.host`                | PostgreSQL database host                 | e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com` |
+| `externalDomain`               | External domain for the Gateway service, e.g. `gateway.beckn-onix-aws-cdk.becknprotocol.io` |          |
+| `registry_url`                 | Registry URL for Beckn services, e.g. `https://registry.beckn-onix-aws-cdk.becknprotocol.io`          | |
+| `database.host`                | PostgreSQL database host, e.g. `beckn-onix-registry.cluster-chnxpgur8sy1.ap-south-1.rds.amazonaws.com`                 |  |
 | `database.dbname`              | PostgreSQL database name                 | `gateway`                                             |
 | `database.username`            | PostgreSQL database username             | `postgres`                                            |
-| `database.password`            | PostgreSQL database password             | `becknonix123`                                        |
-| `ingress.tls.certificateArn`   | ARN for the TLS certificate              | e.g. `arn:aws:acm:region:account-id:certificate/certificate-id` |
+| `database.password`            | PostgreSQL database password             |                                        |
+| `ingress.tls.certificateArn`   | ARN for the TLS certificate, e.g. `arn:aws:acm:region:account-id:certificate/certificate-id`              |  |
 
 ---
 
@@ -46,12 +46,12 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 | Name                                      | Description                                        | Value                                               |
 | ----------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
-| `global.externalDomain`                   | External domain for the BAP/BPP network service     | e.g. `bap-network.beckn-onix-aws-cdk.becknprotocol.io` (BAP), e.g. `bpp-network.beckn-onix-aws-cdk.becknprotocol.io` (BPP) |
-| `global.registry_url`                     | Registry URL for Beckn services                    | e.g. `https://registry.beckn-onix-aws-cdk.becknprotocol.io` |
+| `global.externalDomain`                   | External domain for the BAP/BPP network service, e.g. `bap-network.beckn-onix-aws-cdk.becknprotocol.io` (BAP), `bpp-network.beckn-onix-aws-cdk.becknprotocol.io` (BPP)  |  |
+| `global.registry_url`                     | Registry URL for Beckn services, e.g. `https://registry.beckn-onix-aws-cdk.becknprotocol.io`                    |  |
 | `global.responseCacheMongo.username`      | MongoDB username for response caching              | `root`                                              |
 | `global.responseCacheMongo.password`      | MongoDB password for response caching              |
-| `global.rabbitMQamqp.password`            | RabbitMQ AMQP password for message processing      | `beckn123`                                          |
-| `global.ingress.tls.certificateArn`       | ARN for the TLS certificate                        | e.g. `arn:aws:acm:region:account-id:certificate/certificate-id` |
+| `global.rabbitMQamqp.password`            | RabbitMQ AMQP password for message processing      |                                           |
+| `global.ingress.tls.certificateArn`       | ARN for the TLS certificate, e.g. `arn:aws:acm:region:account-id:certificate/certificate-id`                        |  |
 
 
 ## Installing the Charts
