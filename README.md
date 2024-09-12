@@ -195,16 +195,16 @@ helm install beckn-onix-bpp . \
 
 After installing all Beckn-Onix services, proceed with the next steps to complete the setup:
 
-1. **[Verify Deployments](verify-deployments.md)**
+1. **[Verify Deployments](documentations/verify-deployments.md)**
 
-   To ensure that your Beckn-Onix services are running correctly, follow the instructions in the [Verify Deployments](verify-deployments.md) document. This will help you confirm that the services are operational and identify any issues that need to be addressed.
+   To ensure that your Beckn-Onix services are running correctly, follow the instructions in the [Verify Deployments](documentations/verify-deployments.md) document. This will help you confirm that the services are operational and identify any issues that need to be addressed.
 
-2. **[Update DNS Records](post-deployment-dns-config.md)**
+2. **[Update DNS Records](documentations/post-deployment-dns-config.md)**
 
-   To configure DNS settings for your services, follow the instructions provided in the [Post-Deployment DNS Configuration](post-deployment-dns-config.md) document. This will guide you through retrieving the necessary Load Balancer addresses and updating your DNS records.
+   To configure DNS settings for your services, follow the instructions provided in the [Post-Deployment DNS Configuration](documentations/post-deployment-dns-config.md) document. This will guide you through retrieving the necessary Load Balancer addresses and updating your DNS records.
 
-3. **[Register BAP and BPP with Registry](post-deployment-bap-bpp-register.md)**
+3. **[Register BAP and BPP with Registry](documentations/post-deployment-bap-bpp-register.md)**
 
-   After updating your DNS records, you need to register your participants BAP and BPP network with the registry service. Follow the steps in the [BAP and BPP Registration](post-deployment-bap-bpp-registration.md) document to complete this process.
+   After updating your DNS records, you need to register your participants BAP and BPP network with the registry service. Follow the steps in the [BAP and BPP Registration](documentations/post-deployment-bap-bpp-registration.md) document to complete this process.
 
 Make sure to follow the detailed steps in the linked documents to complete the setup and ensure your services are correctly configured and registered.
