@@ -205,6 +205,6 @@ After installing all Beckn-Onix services, proceed with the next steps to complet
 
 3. **[Register BAP and BPP with Registry](documentations/post-deployment-bap-bpp-register.md)**
 
-   After updating your DNS records, you need to register your participants BAP and BPP network with the registry service. Follow the steps in the [BAP and BPP Registration](documentations/post-deployment-bap-bpp-registration.md) document to complete this process.
+   After updating your DNS records, you need to register your participants BAP and BPP network with the registry service. Follow the steps in the [BAP and BPP Registration](documentations/post-deployment-bap-bpp-register.md) document to complete this process.
 
 Make sure to follow the detailed steps in the linked documents to complete the setup and ensure your services are correctly configured and registered.
