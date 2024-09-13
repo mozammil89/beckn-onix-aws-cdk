@@ -9,11 +9,11 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
 
 ## Prerequisites
 
-- An Amazon EKS cluster
-- Kubectl client configured with Amazon EKS cluster
-- Helm 3 client
-- A PostgreSQL database instance (managed by AWS RDS Aurora in this case)
-- Public domain/sub-domain along with SSL certificates (for HTTPS)
+- **An Amazon EKS Cluster**: Ensure that your Amazon EKS cluster has the [Amazon EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/pv-csi.html) and [Amazon EFS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html) add-ons installed. These drivers are necessary for managing storage resources and volumes for BAP/BPP services.
+- **Kubectl Client**: Configured with the Amazon EKS cluster.
+- **Helm 3 Client**: For managing Helm charts.
+- **A PostgreSQL Database Instance**: Managed by AWS RDS Aurora in this case.
+- **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
 
 
 ### Domain and Subdomains
@@ -33,7 +33,7 @@ Gather the list of subdomains you intend to use for Beckn-ONIX services (as outl
 
 To obtain an SSL certificate through AWS Certificate Manager, follow the easy steps provided in the official [AWS ACM Documentation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html).
 
-Once a certificate is issued, copy the certificate ARN to be used in the Helm charts. The certificate ARN follows this format:
+Once a certificate is issued, copy the certificate ARN to be used in the Helm charts later. The certificate ARN follows this format:
 
 `arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>`
 
@@ -189,7 +189,7 @@ npm install libsodium-wrappers
 node generate-keys.js
 ```
 
-Copy the `publicKey` and `privateKey` from the output. You need to pass keys to follwing Helm install command. These keys are also added into the K8s secrets via Helm chart. 
+Copy the `publicKey` and `privateKey` from the output. You need to pass keys to following Helm install command. These keys are also added into the K8s secrets via Helm chart. 
 
 > **Info:** AWS CDK automates this process by using the same key generation script and passing the keys directly to the Helm chart.
 
@@ -201,7 +201,8 @@ helm install beckn-onix-bap . \
   --set global.registry_url=https://<registry_domain> \
   --set ingress.tls.certificateArn="aws_certificate_manager_arm" \
   --set global.bap.privateKey="private-key" \
-  --set global.bap.publicKey="public-key"
+  --set global.bap.publicKey="public-key" \ 
+  --set global.efs.fileSystemId="efs-systemId"
 ```
 
 #### Beckn-ONIX BPP
@@ -212,7 +213,8 @@ helm install beckn-onix-bpp . \
   --set global.registry_url=https://<registry_domain> \
   --set ingress.tls.certificateArn="aws_certificate_manager_arm"
   --set global.bpp.privateKey="private-key" \
-  --set global.bpp.publicKey="public-key"
+  --set global.bpp.publicKey="public-key" \
+  --set global.efs.fileSystemId="efs-systemId"
 ```
 
 ## Next Steps
