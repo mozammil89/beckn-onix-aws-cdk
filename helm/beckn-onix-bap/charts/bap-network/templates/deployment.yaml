@@ -31,6 +31,14 @@ spec:
       serviceAccountName: {{ include "common.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: retain-schemas-content-ebs-volume
+          image: {{ .Values.global.image.repository }}
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          command: ['sh', '-c', 'cp -r /usr/src/app/schemas/* /mnt/schemas/']
+          volumeMounts:
+            - name: bap-schemas-efs-volume
+              mountPath: /mnt/schemas
       containers:
         - name: {{ .Chart.Name }}
           image: {{ .Values.global.image.repository }}
@@ -54,7 +62,19 @@ spec:
               mountPath: "/usr/src/app/config/default.yaml"
               subPath: default.yaml
               readOnly: true
+            # EFS volumes for L2 schemas 
+            - name: bap-schemas-efs-volume
+              mountPath: /usr/src/app/schemas
+            # EBS volumes for logs
+            - name: bap-network-logs-ebs-volume
+              mountPath: /usr/src/app/logs
       volumes:
         - name: bap-network-config
           configMap:
             name: {{ include "common.name" . }}-config
+        - name: bap-schemas-efs-volume
+          persistentVolumeClaim:
+            claimName: beckn-onix-bap-efs-pvc
+        - name: bap-network-logs-ebs-volume
+          persistentVolumeClaim:
+            claimName: {{ include "common.name" . }}-logs-pvc

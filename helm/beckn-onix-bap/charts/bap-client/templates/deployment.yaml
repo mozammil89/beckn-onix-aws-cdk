@@ -54,7 +54,19 @@ spec:
               mountPath: "/usr/src/app/config/default.yaml"
               subPath: default.yaml
               readOnly: true
+            # EFS volumes for L2 schemas 
+            - name: bap-schemas-efs-volume
+              mountPath: /usr/src/app/schemas
+            # EBS volumes for logs
+            - name: bap-client-logs-ebs-volume
+              mountPath: /usr/src/app/logs
       volumes:
         - name: bap-client-config
           configMap:
             name: {{ include "common.name" . }}-config
+        - name: bap-schemas-efs-volume
+          persistentVolumeClaim:
+            claimName: beckn-onix-bap-efs-pvc
+        - name: bap-client-logs-ebs-volume
+          persistentVolumeClaim:
+            claimName: {{ include "common.name" . }}-logs-pvc

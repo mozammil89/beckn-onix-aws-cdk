@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 global:
-  namespace: beckn-onix-bap
+  namespace: beckn-onix-bap2
   image:
     repository: fidedocker/protocol-server
     pullPolicy: IfNotPresent
@@ -21,14 +21,14 @@ global:
     port: 27017
     dbname: protocol_server
     username: beckn
-    password:
+    password: beckn123
 
 # RabbitMQ connection details
   rabbitMQamqp:
     host: rabbitmq.bap-common-services.svc.cluster.local
     port: 5672
     username: beckn
-    password:
+    password: beckn123
 
 # Ingress definition for AWS Application Loadbalancer. 
 # This is required for each component available over the public network.
@@ -37,6 +37,17 @@ global:
     tls:
       certificateArn: arn:aws:acm:region:account-id:certificate/certificate-id # SSL certificate location from AWS Certificate Manager - https://aws.amazon.com/certificate-manager/ 
       sslRedirect: true  # Set to true to enable SSL redirection, useful for UI redirection.
+
+  serviceAccount:
+  # Specifies whether a service account should be created
+    create: false
+  # Automatically mount a ServiceAccount's API credentials?
+    automount: true
+  # Annotations to add to the service account
+    annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+    name: "beckn-onix-bap-sa"
 
   registry_url:
   externalDomain:
@@ -50,4 +61,4 @@ global:
   tolerations: []
 
   affinity: {}
-
+      

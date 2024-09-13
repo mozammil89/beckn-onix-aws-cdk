@@ -54,7 +54,19 @@ spec:
               mountPath: "/usr/src/app/config/default.yaml"
               subPath: default.yaml
               readOnly: true
+            # EFS volumes for L2 schemas 
+            - name: bpp-schemas-efs-volume
+              mountPath: /usr/src/app/schemas
+            # EBS volumes for logs
+            - name: bpp-client-logs-ebs-volume
+              mountPath: /usr/src/app/logs
       volumes:
         - name: bpp-client-config
           configMap:
             name: {{ include "common.name" . }}-config
+        - name: bpp-schemas-efs-volume
+          persistentVolumeClaim:
+            claimName: beckn-onix-bpp-efs-pvc
+        - name: bpp-client-logs-ebs-volume
+          persistentVolumeClaim:
+            claimName: {{ include "common.name" . }}-logs-pvc
