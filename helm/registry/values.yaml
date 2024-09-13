@@ -50,7 +50,8 @@ ingress:
   enabled: true  # If enabled, HTTP port 80 listener is open on AWS ALB. Set to false to disable Ingress. Without ingress service will be scoped to K8s cluster.
   tls:
     enabled: true  # Set to true to enable TLS with Aamzon Certificate Manager (ACM)
-    certificateArn: arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189 # SSL certificate location if tls is enabled
+    # SSL certificate location if tls is enabled
+    certificateArn:  
     sslRedirect: true  # Set to true to enable SSL redirection
 
 resources:
@@ -81,10 +82,12 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+# Registry AWS RDS Postgres connection details
 database:
-  host: localhost
-  dbname: gateway-database
-  username: registry-admin
+  host: 
+  dbname: registry
+  username: postgres
+  password:
 
 nodeSelector: {}
 

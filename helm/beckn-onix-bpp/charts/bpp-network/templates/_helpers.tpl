@@ -73,3 +73,23 @@ Helper for constructing resource names with prefixes or suffixes.
 {{- define "common.resourceName" -}}
 {{- printf "%s-%s" (include "common.fullname" .) .Values.suffix | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{- define "getSecretValue" -}}
+{{- $secretName := .secretName -}}
+{{- $namespace := .namespace -}}
+{{- $key := .key -}}
+{{- $secret := (lookup "v1" "Secret" $namespace $secretName) -}}
+{{- if $secret -}}
+{{- $data := $secret.data -}}
+{{- if $data -}}
+{{- $value := index $data $key | b64dec -}}
+{{- $value -}}
+{{- else -}}
+{{- printf "Error: Secret data for %s not found" $key -}}
+{{- end -}}
+{{- else -}}
+{{- printf "Error: Secret %s not found in namespace %s" $secretName $namespace -}}
+{{- end -}}
+{{- end -}}
+
+

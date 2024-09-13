@@ -20,7 +20,7 @@ global:
     host: mongodb.bpp-common-services.svc.cluster.local
     port: 27017
     dbname: protocol_server
-    username: beckn
+    username: root
     password:
 
 # RabbitMQ connection details
@@ -35,11 +35,18 @@ global:
   ingress:
     enabled: true  # If enabled, ALB will be provisioned as per ingress.yaml. Without ingress service will be scoped to K8s cluster.
     tls:
-      certificateArn: arn:aws:acm:region:account-id:certificate/certificate-id # SSL certificate location from AWS Certificate Manager - https://aws.amazon.com/certificate-manager/ 
+      # Must be set while installing Helm chart. SSL certificate ARN (e.g. arn:aws:acm:region:account-id:certificate/certificate-id) from AWS Certificate Manager - https://aws.amazon.com/certificate-manager/ 
+      certificateArn:  
       sslRedirect: true  # Set to true to enable SSL redirection, useful for UI redirection.
 
-  registry_url:
-  externalDomain:
+# Must be set while installing Helm chart
+  externalDomain: 
+  registry_url:    
+  bpp:
+    privateKey: 
+    publicKey: 
+  efs:
+    fileSystemId:
 
   imagePullSecrets: []
   nameOverride: ""

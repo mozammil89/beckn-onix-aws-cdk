@@ -19,15 +19,12 @@ data:
 
     # Mongodb connection details
     responseCache:
-      mongoURL: "mongodb://{{ .Values.global.responseCacheMongo.username }}:{{ .Values.global.responseCacheMongo.password }}@{{ .Values.global.responseCacheMongo.host }}:{{ .Values.global.responseCacheMongo.port }}/{{ .Values.global.responseCacheMongo.dbname }}?authSource=admin"
+      # By default password is picked from MongoDB POD if not supplied through Helm values.
+      mongoURL: "mongodb://{{ .Values.global.responseCacheMongo.username }}:{{ if .Values.global.responseCacheMongo.password }}{{ .Values.global.responseCacheMongo.password }}{{ else }}{{ include "getSecretValue" (dict "secretName" "mongodb" "namespace" "bpp-common-services" "key" "mongodb-root-password") }}{{ end }}@{{ .Values.global.responseCacheMongo.host }}:{{ .Values.global.responseCacheMongo.port }}/{{ .Values.global.responseCacheMongo.dbname }}?authSource=admin"
       ttl: "PT10M"
 
     
     client:
-    # synchronous only required for BPP
-    #  synchronous:
-    #    mongoURL: "mongodb://{{ .Values.global.responseCacheMongo.username }}:{{ .Values.global.responseCacheMongo.password }}@{{ .Values.global.responseCacheMongo.host }}:{{ .Values.global.responseCacheMongo.port }}/{{ .Values.global.responseCacheMongo.dbname }}?authSource=admin"
-
     # Only required for BPP
       webhook:
         url: "http://sandbox.beckn-onix-aws-cdk.becknprotocol.io"
@@ -43,7 +40,8 @@ data:
         outboxQueue: "outbox-bpp"
 
         # RabbitMQ connection details
-        amqpURL: "amqp://{{ .Values.global.rabbitMQamqp.username }}:{{ .Values.global.rabbitMQamqp.password }}@{{ .Values.global.rabbitMQamqp.host }}:{{ .Values.global.rabbitMQamqp.port }}"
+        # By default password is picked from RabbitMQ POD if not supplied through Helm values.
+        amqpURL: "amqp://{{ .Values.global.rabbitMQamqp.username }}:{{ if .Values.global.rabbitMQamqp.password }}{{ .Values.global.rabbitMQamqp.password }}{{ else }}{{ include "getSecretValue" (dict "secretName" "rabbitmq" "namespace" "bpp-common-services" "key" "rabbitmq-password") }}{{ end }}@{{ .Values.global.rabbitMQamqp.host }}:{{ .Values.global.rabbitMQamqp.port }}"
 
       # Mandatory.
       actions:
@@ -102,8 +100,8 @@ data:
             ttl: "PT10S"
 
       # Mandatory keys
-      privateKey: "9nPfXZyYStGUi+j6PLiQT615cBnHLJfF39AYUWqcJOawQsNlqKqUXN3AdDQHD/y/Ft4eOu1owaXEIZ3ahGjfdg=="
-      publicKey: "sELDZaiqlFzdwHQ0Bw/8vxbeHjrtaMGlxCGd2oRo33Y="
+      privateKey: {{ .Values.global.bpp.privateKey }}
+      publicKey: {{ .Values.global.bpp.publicKey }}
 
       # Subscriber details
       subscriberId: "{{ .Values.global.externalDomain }}"

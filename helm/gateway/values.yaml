@@ -81,10 +81,14 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+# Gateway AWS RDS Postgres connection details
 database:
-  host: localhost
-  dbname: gateway-database
-  username: registry-admin
+  host: 
+  dbname: gateway
+  username: postgres
+  password:
+
+registry_url: 
 
 nodeSelector: {}
 
