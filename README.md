@@ -88,7 +88,7 @@ Before installing the Helm chart, it’s important to familiarize yourself with 
 | `global.rabbitMQamqp.host`            | RebbitMQ host | `rabbitmq.bap-common-services.svc.cluster.local` |
 | `global.redisCache.host`            | Redis host | `redis-master.bap-common-services.svc.cluster.local ` |
 | `global.ingress.tls.certificateArn`       | ARN for the TLS certificate, e.g. `arn:aws:acm:region:account-id:certificate/certificate-id`|             |
-| `global.bap.privateKey` or `global.bap.privateKey`       | Private key for BAP/BPP, used during registration |             |
+| `global.bap.privateKey` or `global.bpp.privateKey`       | Private key for BAP/BPP, used during registration |             |
 | `global.bap.publicKey` or `global.bpp.publicKey`       | Public key for BAP/BPP, used during registration |             |
 
 
@@ -170,7 +170,7 @@ After creating the namespace, you need to re-run the installation commands for R
 
 Example for Redis:
 ```bash
-helm install -n bpp-common-services redis bitnami/redis --version 16.13.2 \
+helm install -n bpp-common-services redis bitnami/redis \
 --set auth.enabled=false \
 --set replica.replicaCount=0 \
 --set master.persistence.storageClass="gp2"
@@ -178,15 +178,32 @@ helm install -n bpp-common-services redis bitnami/redis --version 16.13.2 \
 
 ### Proceed to Install Beckn-ONIX BAP & BPP
 
+#### Generate SSL Key Pair
+The Protocol Server (BAP/BPP) provides a key generation script.
+
+**Note:** Ensure Node.js is installed on your system.
+
+```bash
+curl https://raw.githubusercontent.com/beckn/protocol-server/master/scripts/generate-keys.js > generate-keys.js
+npm install libsodium-wrappers
+node generate-keys.js
+```
+
+Copy the `publicKey` and `privateKey` from the output. You need to pass keys to follwing Helm install command. These keys are also added into the K8s secrets via Helm chart. 
+
+**Note:** AWS CDK automates this process by using the same key generation script and passing the keys directly to the Helm chart.
+
+> **Info:** If you are not using AWS CDK, you need to manually generate and provide the SSL key pair as outlined above.
+
 #### Beck-ONIX BAP
 
 ```bash
 helm install beckn-onix-bap . \
   --set global.externalDomain=<bap_network_external_domain> \
   --set global.registry_url=https://<registry_domain> \
-  --set global.responseCacheMongo.password=<mongodb_root_password> \
-  --set global.rabbitMQamqp.password=<amq_password> \
-  --set ingress.tls.certificateArn="aws_certificate_manager_arm"
+  --set ingress.tls.certificateArn="aws_certificate_manager_arm" \
+  --set global.bap.privateKey="private-key" \
+  --set global.bap.publicKey="public-key"
 ```
 
 #### Beckn-ONIX BPP
@@ -195,9 +212,9 @@ helm install beckn-onix-bap . \
 helm install beckn-onix-bpp . \
   --set global.externalDomain=<bpp_network_external_domain> \
   --set global.registry_url=https://<registry_domain> \
-  --set global.responseCacheMongo.password=<mongodb_root_password> \
-  --set global.rabbitMQamqp.password=<amq_password> \
   --set ingress.tls.certificateArn="aws_certificate_manager_arm"
+  --set global.bpp.privateKey="private-key" \
+  --set global.bpp.publicKey="public-key"
 ```
 
 ## Next Steps
