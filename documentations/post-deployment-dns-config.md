@@ -1,4 +1,4 @@
-# Post-Deployment: DNS Configuration
+# Beckn-ONIX DNS Configuration
 
 After verifying that the Beckn-Onix services (`registry`, `gateway`, `bap-network`, and `bap-client`) are successfully deployed, you need to update your DNS settings to ensure proper routing of traffic. Follow these steps to configure your DNS records.
 
@@ -41,3 +41,10 @@ Create or update DNS records for each service. You need to set up the following 
 - **Type:** CNAME (or Alias record if using Route 53)
 - **Name:** The subdomain you want to use (e.g., `registry.beckn-onix-aws-cdk.becknprotocol.io`, `gateway.beckn-onix-aws-cdk.becknprotocol.io`, etc.)
 - **Value:** The respective DNS name of the Amazon ALB retrieved in the previous step.
+
+## Next Steps
+
+After updating your DNS records, you need to register your participants BAP and BPP network with the registry service. Follow the steps in the [BAP and BPP Registration](documentations/post-deployment-bap-bpp-register.md) document to complete this process.
+
+**[Register BAP and BPP with Registry](documentations/post-deployment-bap-bpp-register.md)**
+

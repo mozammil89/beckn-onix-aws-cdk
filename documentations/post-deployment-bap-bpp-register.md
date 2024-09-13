@@ -1,4 +1,4 @@
-# Post-Deployment: Register BAP and BPP Networks
+# BAP and BPP registration with Registry
 
 After updating your DNS records, you need to register the `bap-network` and `bpp-network` services with the registry service. Follow these instructions to complete the registration process:
 

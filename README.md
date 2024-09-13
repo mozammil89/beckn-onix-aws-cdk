@@ -44,6 +44,8 @@ Before installing the Helm chart, it’s important to familiarize yourself with 
 
 ### Registry Parameters
 
+**Note:** Default values that are empty must be provided during chart execution.
+
 | Name                          | Description                             | Default Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
 | `externalDomain`               | External domain for the Registry service, e.g. <br> `registry.beckn-onix-aws-cdk.becknprotocol.io`|           |
@@ -56,6 +58,8 @@ Before installing the Helm chart, it’s important to familiarize yourself with 
 ---
 
 ### Gateway Parameters
+
+**Note:** Default values that are empty must be provided during chart execution.
 
 | Name                          | Description                             | Default Value                                                |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------- |
@@ -71,6 +75,8 @@ Before installing the Helm chart, it’s important to familiarize yourself with 
 
 ### BAP/BPP Parameters
 
+**Note:** Default values that are empty must be provided during chart execution.
+
 | Name                                      | Description                                        | Default Value                                               |
 | ----------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
 | `global.externalDomain`                   | External domain for the BAP/BPP network service, e.g. `bap-network.beckn-onix-aws-cdk.becknprotocol.io` (BAP), `bpp-network.beckn-onix-aws-cdk.becknprotocol.io` (BPP)|           |
@@ -82,6 +88,9 @@ Before installing the Helm chart, it’s important to familiarize yourself with 
 | `global.rabbitMQamqp.host`            | RebbitMQ host | `rabbitmq.bap-common-services.svc.cluster.local` |
 | `global.redisCache.host`            | Redis host | `redis-master.bap-common-services.svc.cluster.local ` |
 | `global.ingress.tls.certificateArn`       | ARN for the TLS certificate, e.g. `arn:aws:acm:region:account-id:certificate/certificate-id`|             |
+| `global.bap.privateKey` or `global.bap.privateKey`       | Private key for BAP/BPP, used during registration |             |
+| `global.bap.publicKey` or `global.bpp.publicKey`       | Public key for BAP/BPP, used during registration |             |
+
 
 ## Installing the Charts
 
@@ -122,7 +131,7 @@ BAP and BPP services require Redis, MongoDB, and RabbitMQ. These services must b
 
 #### Install Redis
 ```bash
-helm install -n bap-common-services redis bitnami/redis --version 16.13.2 \
+helm install -n bap-common-services redis bitnami/redis \
 --set auth.enabled=false \
 --set replica.replicaCount=0 \
 --set master.persistence.storageClass="gp2" 
@@ -143,7 +152,7 @@ helm install -n bap-common-services rabbitmq bitnami/rabbitmq \
 --set persistence.enabled=true \
 --set persistence.storageClass="gp2" \
 --set auth.username=beckn \
---set auth.password="<password-of-your-choice>"
+--set auth.password=$(openssl rand -base64 12)
 ```
 
 #### Install Common Services for BAP
