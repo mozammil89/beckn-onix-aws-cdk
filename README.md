@@ -191,9 +191,7 @@ node generate-keys.js
 
 Copy the `publicKey` and `privateKey` from the output. You need to pass keys to follwing Helm install command. These keys are also added into the K8s secrets via Helm chart. 
 
-**Note:** AWS CDK automates this process by using the same key generation script and passing the keys directly to the Helm chart.
-
-> **Info:** If you are not using AWS CDK, you need to manually generate and provide the SSL key pair as outlined above.
+> **Info:** AWS CDK automates this process by using the same key generation script and passing the keys directly to the Helm chart.
 
 #### Beck-ONIX BAP
 
