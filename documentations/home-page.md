@@ -18,7 +18,7 @@ The Beckn-ONIX one-click deployment packaging offers two mode of deployments on 
 #### Mode One: AWS CDK + Helm
 This mode offers a comprehensive solution for users who prefer a one-click deployment approach to provisioning AWS infrastructure and deploying the Beckn-ONIX services, all in automated fashion.
 
-* [AWS CDK One Click Deployment](documentations/01-Deployment-CDK-Sunbirdrc2.md)
+* [AWS CDK One Click Deployment](documentations/02-Deployment-Helm-Beckn-ONIX.md)
 
 #### Mode Two: Direct Helm Chart Invocation
 An alternative deployment approach accommodates users with existing essential AWS infrastructure components like Amazon RDS Postgres and an Amazon EKS cluster. This mode enables the direct installation of the Sunbird RC 2.0 Helm chart without relying on AWS CDK scripts. Alternatively, you can combine both methods, utilizing CDK for provisioning specific services like the EKS cluster.
@@ -38,3 +38,5 @@ Required AWS services to deploy and operate the Beckn-ONIX services:
 * Amazon DocumentDB with MongoDB compatibility 
 * Amazon Elasticache - Redis
 * Amazon MQ - RabbitMQ
+
+![Architecture](documentations/images/Beckn-ONIX-AWS-reference-arch-master.png)
