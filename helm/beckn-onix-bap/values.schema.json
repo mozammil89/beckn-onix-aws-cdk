@@ -42,7 +42,7 @@
           "required": ["fileSystemId"],
           "description": "EFS-related configuration."
         },
-        "bpp": {
+        "bap": {
           "type": "object",
           "properties": {
             "privateKey": {
@@ -63,7 +63,7 @@
         "registry_url",
         "ingress",
         "efs",
-        "bpp"
+        "bap"
       ]
     }
   }
