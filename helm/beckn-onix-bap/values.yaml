@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 global:
-  namespace: beckn-onix-bap2
+  namespace: beckn-onix-bap
   image:
     repository: fidedocker/protocol-server
     pullPolicy: IfNotPresent
@@ -50,7 +50,7 @@ global:
 
 # BPP subscribe_id. Default to externalDomain value.
   subscriber_id:
-  
+
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""

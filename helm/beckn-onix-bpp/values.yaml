@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 global:
-  namespace: beckn-onix-bpp2
+  namespace: beckn-onix-bpp
   image:
     repository: fidedocker/protocol-server
     pullPolicy: IfNotPresent
