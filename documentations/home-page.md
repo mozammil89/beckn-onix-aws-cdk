@@ -8,12 +8,14 @@ Beckn-ONIX is **[FIDE](https://fide.org/)** project aimed at easing setup and ma
 
 
 ### Packaging overview
-This packaging initiative offers a practical approach to increase the adoption, streamline deployment and management of Beckn-ONIX services on AWS by providing a reference architecture and one-click deployment automation scripts. It allows builders to manage AWS resource provisioning and application deployment in a programmatic and repeatable way.
+This packaging initiative provides a robust solution for deploying and managing Beckn-ONIX services on AWS. It is designed to ensure high availability, scalability, and resilience of Beckn-ONIX components like the Gateway, Registry, BAP, and BPP, making them ready for a Kubernetes-based environment. Additionally, it allows users the flexibility to choose managed AWS services, optimizing for production-scale deployments while reducing operational overhead.
 
-This repository contains the source code and configuration for deploying Beckn-ONIX services stack that leverages the power of Amazon Web Services (AWS) **[Cloud Development Kit (CDK)](https://aws.amazon.com/cdk)** for infrastructure provisioning and **[Helm](https://helm.sh)** for deploying services within an Amazon Elastic Kubernetes Service (EKS) cluster.  
+The packaging supports a fully automated, one-click deployment solution aligned with the reference architecture, ensuring that each layer of the Beckn-ONIX stack is designed with fault tolerance, load balancing, and scaling in mind. This approach not only simplifies the deployment process but also promotes best practices in infrastructure as code, making it easier to maintain and evolve the platform in a cost-effective manner.
 
 ### Beckn-ONIX Deployment
-The Beckn-ONIX one-click deployment packaging offers two mode of deployments on the AWS cloud, catering to different deployment scenarios.
+This repository contains the source code and configuration for deploying Beckn-ONIX services stack that leverages the power of Amazon Web Services (AWS) **[Cloud Development Kit (CDK)](https://aws.amazon.com/cdk)** for infrastructure provisioning and **[Helm](https://helm.sh)** for deploying services within an Amazon Elastic Kubernetes Service (EKS) cluster.  
+
+Two mode of deployments, catering to different deployment scenarios.
 
 #### Mode One: AWS CDK + Helm
 This mode offers a comprehensive solution for users who prefer a one-click deployment approach to provisioning AWS infrastructure and deploying the Beckn-ONIX services, all in automated fashion.
@@ -34,7 +36,7 @@ Required AWS services to deploy and operate the Beckn-ONIX services:
 * Amazon ALB
 * Amazon EBS and EFS volumes
 
-#### Optional AWS services
+#### Optional AWS services - Only for BAP and BPP
 * Amazon DocumentDB with MongoDB compatibility 
 * Amazon Elasticache - Redis
 * Amazon MQ - RabbitMQ
