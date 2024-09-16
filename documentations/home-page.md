@@ -39,4 +39,4 @@ Required AWS services to deploy and operate the Beckn-ONIX services:
 * Amazon Elasticache - Redis
 * Amazon MQ - RabbitMQ
 
-![Architecture](documentations/images/Beckn-ONIX-AWS-reference-arch-master.png)
+![Architecture](images/Beckn-ONIX-AWS-reference-arch-master.png)
