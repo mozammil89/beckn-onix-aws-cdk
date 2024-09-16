@@ -48,6 +48,9 @@ global:
   efs:
     fileSystemId:
 
+# BPP subscribe_id. Default to externalDomain value.
+  subscriber_id:
+  
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""

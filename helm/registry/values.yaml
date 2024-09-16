@@ -96,4 +96,4 @@ tolerations: []
 affinity: {}
 
 # Registry external domain/sub-domain value. Supply the actual value during Helm install "--set externalDomain=<domain-name>"
-externalDomain: localhost
+externalDomain:

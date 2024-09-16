@@ -61,4 +61,5 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-
+# Default to externalDomain value
+subscriber_id:

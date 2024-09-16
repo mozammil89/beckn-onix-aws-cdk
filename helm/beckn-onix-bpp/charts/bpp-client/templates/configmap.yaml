@@ -104,7 +104,7 @@ data:
       publicKey: {{ .Values.global.bpp.publicKey }}
       
       # Subscriber details
-      subscriberId: "{{ .Values.global.externalDomain }}"
+      subscriberId: "{{ .Values.global.subscriber_id | default .Values.global.externalDomain }}"
       subscriberUri: "https://{{ .Values.global.externalDomain }}"
 
       # Registry 
