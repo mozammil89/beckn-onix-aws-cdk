@@ -14,7 +14,7 @@ This repository contains Helm charts for deploying the Beckn-ONIX services on AW
   - [**EBS CSI Driver**](https://docs.aws.amazon.com/eks/latest/userguide/pv-csi.html) and [**EFS CSI Driver**](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html): Required for **BAP** and **BPP**.
   
   If deploying all Beckn-ONIX components on the same EKS cluster, all three add-ons are necessary.
-  
+
 - **Kubectl Client**: Configured with the Amazon EKS cluster.
 - **Helm 3 Client**: For managing Helm charts.
 - **A PostgreSQL Database Instance**: Managed by AWS RDS Aurora in this case.
@@ -204,7 +204,7 @@ Copy the `publicKey` and `privateKey` from the output. You need to pass keys to 
 helm install beckn-onix-bap . \
   --set global.externalDomain=<bap_network_external_domain> \
   --set global.registry_url=https://<registry_domain> \
-  --set ingress.tls.certificateArn="aws_certificate_manager_arm" \
+  --set global.ingress.tls.certificateArn="aws_certificate_manager_arm" \
   --set global.bap.privateKey="private-key" \
   --set global.bap.publicKey="public-key" \ 
   --set global.efs.fileSystemId="efs-systemId"
@@ -216,7 +216,7 @@ helm install beckn-onix-bap . \
 helm install beckn-onix-bpp . \
   --set global.externalDomain=<bpp_network_external_domain> \
   --set global.registry_url=https://<registry_domain> \
-  --set ingress.tls.certificateArn="aws_certificate_manager_arm"
+  --set global.ingress.tls.certificateArn="aws_certificate_manager_arm"
   --set global.bpp.privateKey="private-key" \
   --set global.bpp.publicKey="public-key" \
   --set global.efs.fileSystemId="efs-systemId"
