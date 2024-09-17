@@ -1,13 +1,19 @@
 import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
+import { Construct } from 'constructs';
+import { ConfigProps } from './config';
+import cluster from 'cluster';
 
 export interface RdsStackProps extends cdk.StackProps {
+  config: ConfigProps;
   vpc: ec2.Vpc;
 }
 
 export class RdsStack extends cdk.Stack {
+  public readonly rdsSecret: string;
+  public readonly rdsHost: string;
+
   constructor(scope: Construct, id: string, props: RdsStackProps) {
     super(scope, id, props);
 
@@ -21,7 +27,7 @@ export class RdsStack extends cdk.Stack {
     dbSecurityGroup.addIngressRule(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(5432), 'Allow Postgres access');
 
     // Create Aurora PostgreSQL database cluster
-    new rds.DatabaseCluster(this, 'AuroraCluster', {
+    const cluster = new rds.DatabaseCluster(this, 'AuroraCluster', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_13_15,
       }),
@@ -38,5 +44,7 @@ export class RdsStack extends cdk.Stack {
       defaultDatabaseName: 'MyDatabase',
       removalPolicy: cdk.RemovalPolicy.DESTROY, // Destroy cluster when stack is deleted (useful for development)
     });
+
+    this.rdsHost = cluster.clusterEndpoint.hostname;
   }
 }

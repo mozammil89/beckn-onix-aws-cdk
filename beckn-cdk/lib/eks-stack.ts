@@ -1,59 +1,57 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
+import * as cdk from 'aws-cdk-lib';
+import { KubectlV30Layer } from '@aws-cdk/lambda-layer-kubectl-v30';
+import { Construct } from 'constructs';
+import { ConfigProps } from './config';
 
-interface EksStackProps extends cdk.StackProps {
+export interface EksStackProps extends cdk.StackProps {
   vpc: ec2.Vpc;
 }
 
 export class EksStack extends cdk.Stack {
+  public readonly clusterAdminGroup: iam.Group;
+  public readonly cluster: eks.Cluster;
+
   constructor(scope: Construct, id: string, props: EksStackProps) {
     super(scope, id, props);
 
-    // Create Amazon EKS Cluster
-    const eksCluster = new eks.Cluster(this, 'EKSCluster', {
-      vpc: props.vpc,
-      version: eks.KubernetesVersion.V1_24,
-      defaultCapacity: 0,
+    const vpc = props.vpc;
+
+    // Create the EKS cluster admin role
+    const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
+      assumedBy: new iam.AccountRootPrincipal(), // The account's root user
     });
 
-    // Create a role for EC2 instances in EKS
-    const eksNodeRole = new iam.Role(this, 'EKSNodeRole', {
-      assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEKSWorkerNodePolicy'),
-        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryReadOnly'),
-        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEKS_CNI_Policy'),
-      ],
+    // Create the EKS cluster
+    const cluster = new eks.Cluster(this, 'Cluster', {
+      vpc,
+      mastersRole: clusterAdminRole, // Assign the admin role to the cluster
+      version: eks.KubernetesVersion.V1_30,
+      kubectlLayer: new KubectlV30Layer(this, 'KubectlLayer'), // kubectl layer for cluster interactions
+      authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
     });
 
-    // Create an Auto Scaling Group for EKS worker nodes
-    const autoScalingGroup = new autoscaling.AutoScalingGroup(this, 'EKSASG', {
-      vpc: props.vpc,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_NAT },
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM),
-      machineImage: new eks.EksOptimizedImage({
-        kubernetesVersion: '1.24',
+    cluster.grantAccess('clusterAdminAccess', clusterAdminRole.roleArn, [
+      eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
+        accessScopeType: eks.AccessScopeType.CLUSTER,
       }),
-      desiredCapacity: 3,
-      minCapacity: 3,
-      maxCapacity: 5,
-      role: eksNodeRole,
-    });
+    ]);
 
-    eksCluster.connectAutoScalingGroupCapacity(autoScalingGroup, {
-      mapRole: true,
-    });
+    this.clusterAdminGroup = new iam.Group(this, 'EKSClusterAdminGroup');
+    this.cluster = cluster;
+    // Map the IAM role to Kubernetes system:masters for full cluster access
+    // cluster.awsAuth.addMastersRole(clusterAdminRole);
 
-    // Add the Amazon EBS CSI Driver add-on to the EKS cluster
-    new eks.CfnAddon(this, 'EbsCsiAddon', {
-      addonName: 'aws-ebs-csi-driver',
-      clusterName: eksCluster.clusterName,
-      resolveConflicts: 'OVERWRITE',  // Optional: overwrite if already installed
-    });
+    // // Example of mapping another IAM role to cluster
+    // const exampleUserRole = new iam.Role(this, 'ExampleUserRole', {
+    //   assumedBy: new iam.AccountPrincipal(''),
+    // });
+
+    // cluster.awsAuth.addRoleMapping(exampleUserRole, {
+    //   groups: ['system:masters'], // Full admin access
+    //   username: 'example-user',   // Username for the role in Kubernetes
+    // });
   }
 }
-
