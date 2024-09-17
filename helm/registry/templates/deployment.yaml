@@ -57,21 +57,7 @@ spec:
               mountPath: "/registry/overrideProperties/config/swf.properties"
               subPath: swf.properties
               readOnly: true
-            - name: registry-logger-config
-              mountPath: "/registry/overrideProperties/config/logger.properties"
-              subPath: logger.properties
-              readOnly: true
-            - name: registry-startup-script
-              mountPath: "/registry/bin/service-start"
-              subPath: service-start
-              readOnly: true
       volumes:
         - name: registry-config
           configMap:
             name: {{ include "common.name" . }}-config
-        - name: registry-logger-config
-          configMap:
-            name: {{ include "common.name" . }}-logger-config
-        - name: registry-startup-script
-          configMap:
-            name: {{ include "common.name" . }}-startup-script

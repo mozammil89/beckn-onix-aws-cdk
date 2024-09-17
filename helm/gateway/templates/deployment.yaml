@@ -61,10 +61,6 @@ spec:
               mountPath: "/gateway/overrideProperties/config/networks/onix.json"
               subPath: onix.json
               readOnly: true
-            - name: gateway-logger-config
-              mountPath: "/gateway/overrideProperties/config/logger.properties"
-              subPath: logger.properties
-              readOnly: true
       volumes:
         - name: gateway-config
           configMap:
@@ -72,6 +68,3 @@ spec:
         - name: onixjson-config
           configMap:
             name: {{ include "common.name" . }}-onixjson-config
-        - name: gateway-logger-config
-          configMap:
-            name: {{ include "common.name" . }}-logger-config
