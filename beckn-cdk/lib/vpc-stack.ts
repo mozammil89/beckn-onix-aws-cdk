@@ -2,17 +2,25 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { ConfigProps } from './config';
 
-export class VpcAlbStack extends cdk.Stack {
+export interface VpcStackProps extends cdk.StackProps {
+  config: ConfigProps;
+}
+
+export class VpcStack extends cdk.Stack {
   public readonly vpc: ec2.Vpc;
-  public readonly alb: elb.ApplicationLoadBalancer;
+  // public readonly alb: elb.ApplicationLoadBalancer;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: VpcStackProps) {
     super(scope, id, props);
 
+    const config = props.config;
+
     // Create a new VPC
-    this.vpc = new ec2.Vpc(this, 'MyVPC', {
-      maxAzs: 3,  // Maximum number of availability zones
+    this.vpc = new ec2.Vpc(this, 'beckn-onix-vpc', {
+      maxAzs: config.MAX_AZS,  // Maximum number of availability zones
+      cidr: config.CIDR,
       natGateways: 1,  // Single NAT Gateway in the public subnet
       subnetConfiguration: [
         {
@@ -31,49 +39,6 @@ export class VpcAlbStack extends cdk.Stack {
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         }
       ]
-    });
-
-    // Security group for the ALB
-    const albSecurityGroup = new ec2.SecurityGroup(this, 'ALBSecurityGroup', {
-      vpc: this.vpc,
-      description: 'Security group for ALB',
-      allowAllOutbound: true,
-    });
-
-    albSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80), 'Allow HTTP traffic');
-    albSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443), 'Allow HTTPS traffic');
-
-    // Create Application Load Balancer (ALB)
-    this.alb = new elb.ApplicationLoadBalancer(this, 'MyALB', {
-      vpc: this.vpc,
-      internetFacing: true,
-      securityGroup: albSecurityGroup,
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PUBLIC,
-      },
-    });
-
-    // ALB Listener
-    const listener = this.alb.addListener('Listener', {
-      port: 80,
-      open: true,
-    });
-
-    listener.addTargets('Target', {
-      port: 80,
-      targets: [],
-      healthCheck: {
-        path: '/',
-        interval: cdk.Duration.minutes(1),
-      },
-    });
-
-    // Outputs
-
-    // Output the ALB DNS name so it can be referenced in other stacks
-    new cdk.CfnOutput(this, 'ALBDNSName', {
-      value: this.alb.loadBalancerDnsName,
-      exportName: 'ALBDNSName',  // Export ALB DNS name to be used in other stacks
     });
 
     // Output the VPC CIDR block for other stacks to reference
