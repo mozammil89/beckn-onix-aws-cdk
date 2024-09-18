@@ -28,6 +28,7 @@ export class EksStack extends cdk.Stack {
     const cidr = config.CIDR; // from config file
     const EKS_CLUSTER_NAME = config.EKS_CLUSTER_NAME; // take it from config file
     // const ROLE_ARN = 'ROLE_ARN'; // take form config file
+    const ROLE_ARN = config.ROLE_ARN;
 
     const securityGroupEKS = new ec2.SecurityGroup(this, "EKSSecurityGroup", {
         vpc: vpc,
@@ -46,9 +47,11 @@ export class EksStack extends cdk.Stack {
     //   assumedBy: new iam.ServicePrincipal('eks.amazonaws.com'),
     // });
 
-    const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
-      assumedBy: new iam.AccountRootPrincipal(),
-    });
+    // const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
+    //   assumedBy: new iam.AccountRootPrincipal(),
+    // });
+
+    const iamRole = iam.Role.fromRoleArn(this, "MyIAMRole", ROLE_ARN);
 
     // Create the EKS cluster
     this.cluster = new eks.Cluster(this, 'EksCluster', {
@@ -62,7 +65,7 @@ export class EksStack extends cdk.Stack {
         endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
         ipFamily: eks.IpFamily.IP_V4,
         clusterName: EKS_CLUSTER_NAME,
-        mastersRole: clusterAdminRole, // Assign the admin role to the cluster
+        mastersRole: iamRole, // Assign the admin role to the cluster
         outputClusterName: true,
         outputConfigCommand: true,
         authenticationMode: eks.AuthenticationMode.API_AND_CONFIG_MAP,
@@ -74,7 +77,7 @@ export class EksStack extends cdk.Stack {
         },
     });
 
-    const clusterAdminGroup = new iam.Group(this, 'ClusterAdminGroup');
+    // const clusterAdminGroup = new iam.Group(this, 'ClusterAdminGroup');
 
     // this.cluster.grantAccess('clusterAdminAccess', clusterAdminGroup.roleArn, [
     //   eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
@@ -82,11 +85,11 @@ export class EksStack extends cdk.Stack {
     //   }),
     // ]);
 
-    const eksUser = new iam.User(this, 'EksUser');
-    this.cluster.awsAuth.addUserMapping(eksUser, {
-      groups: ['system:masters'],
-      username: eksUser.userName,
-    });
+    // const eksUser = new iam.User(this, 'EksUser');
+    // this.cluster.awsAuth.addUserMapping(eksUser, {
+    //   groups: ['system:masters'],
+    //   username: eksUser.userName,
+    // });
 
     const key1 = this.cluster.openIdConnectProvider.openIdConnectProviderIssuer;
     const stringEquals = new cdk.CfnJson(this, 'ConditionJson', {
@@ -127,9 +130,9 @@ export class EksStack extends cdk.Stack {
     );
 
 
-    const accessPolicy = eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
-      accessScopeType: eks.AccessScopeType.CLUSTER,
-    })
+    // const accessPolicy = eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
+    //   accessScopeType: eks.AccessScopeType.CLUSTER,
+    // })
 
     // const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
     //       assumedBy: new iam.ServicePrincipal('eks.amazonaws.com'),

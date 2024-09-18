@@ -25,6 +25,7 @@ export type ConfigProps = {
     CIDR: string,
     EC2_NODES_COUNT: number;
     EC2_INSTANCE_TYPE: string;
+    ROLE_ARN: string;
 };
 
 export const getConfig = (): ConfigProps => ({
@@ -46,5 +47,6 @@ export const getConfig = (): ConfigProps => ({
     EKS_CLUSTER_NAME: process.env.EKS_CLUSTER_NAME || "beckn-onix",
     CIDR: process.env.CIDR || "10.0.0.0/16",
     EC2_NODES_COUNT: Number(process.env.EC2_NODES_COUNT) || 2,
-    EC2_INSTANCE_TYPE: process.env.EC2_INSTANCE_TYPE || "t3.medium"
+    EC2_INSTANCE_TYPE: process.env.EC2_INSTANCE_TYPE || "t3.medium",
+    ROLE_ARN: process.env.ROLE_ARN || "",
 });
