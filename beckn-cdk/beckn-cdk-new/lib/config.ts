@@ -14,11 +14,12 @@ export type ConfigProps = {
     GATEWAY_RELEASE_NAME: string;
     BAP_RELEASE_NAME: string;
     BPP_RELEASE_NAME: string,
+    RDS_HOST: string,
     RDS_USER: string,
     RDS_PASSWORD: string,
     EXTERNAL_DOMAIN: string,
     CERT_ARN: string,
-    CHART_NAME: string,
+    // CHART_NAME: string,
     REGISTRY_URL: string,
     MAX_AZS: number,
     EKS_CLUSTER_NAME: string,
@@ -31,19 +32,20 @@ export type ConfigProps = {
 export const getConfig = (): ConfigProps => ({
     REGION: process.env.REGION || "ap-south-1",
     ACCOUNT: process.env.ACCOUNT || "",
-    REPOSITORY: "",
+    REPOSITORY: process.env.REPOSITORY || "",
     MAX_AZS: Number(process.env.MAZ_AZs) || 2,
     NAMESPACE: "-common-services",
     REGISTRY_RELEASE_NAME: "registry",
     GATEWAY_RELEASE_NAME: "gateway",
     BAP_RELEASE_NAME: "beckn-onix-bap",
     BPP_RELEASE_NAME: "beckn-onix-bpp",
+    RDS_HOST: process.env.RDS_HOST || "",
     RDS_USER: process.env.RDS_USER || "",
     RDS_PASSWORD: "dummy_password",
-    EXTERNAL_DOMAIN: "", // user must provide it
-    CERT_ARN: "", // user must provide it
-    CHART_NAME: "", // chart name
-    REGISTRY_URL: "", // bitnami specification
+    EXTERNAL_DOMAIN: process.env.EXTERNAL_DOMAIN || "", // user must provide it
+    CERT_ARN: process.env.CERT_ARN || "", // user must provide it
+    // CHART_NAME: "", // chart name
+    REGISTRY_URL: process.env.REGISTRY_URL || "", // beckn-onix reg url
     EKS_CLUSTER_NAME: process.env.EKS_CLUSTER_NAME || "beckn-onix",
     CIDR: process.env.CIDR || "10.0.0.0/16",
     EC2_NODES_COUNT: Number(process.env.EC2_NODES_COUNT) || 2,

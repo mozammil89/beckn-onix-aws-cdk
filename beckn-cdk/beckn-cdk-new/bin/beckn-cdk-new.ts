@@ -40,12 +40,9 @@ const deployRegistry = () => {
   const rdsStack = new RdsStack(app, 'RegistryRdsStack', { config: config, vpc: vpcStack.vpc, env });
 
   new HelmRegistryStack(app, 'HelmRegistryStack', {
-    externalDomain: config.EXTERNAL_DOMAIN,
-    certArn: config.CERT_ARN,
-    chartName: config.CHART_NAME,
     config: config,
     eksCluster: eksStack.cluster,
-    rdsHost: rdsStack.rdsHost,
+    env,
   });
 };
 
@@ -55,15 +52,16 @@ const deployGateway = () => {
   const eksStack = new EksStack(app, 'GatewayEksStack', { config: config, vpc: vpcStack.vpc, env });
   const rdsStack = new RdsStack(app, 'GatewayRdsStack', { config: config, vpc: vpcStack.vpc, env });
 
-  new HelmGatewayStack(app, 'HelmGatewayStack', {
-    config: config,
-    eksCluster: eksStack.cluster,
-    chartName: config.CHART_NAME,
-    externalDomain: config.EXTERNAL_DOMAIN,
-    certArn: config.CERT_ARN,
-    registryUrl: config.REGISTRY_URL,
-    rdsHost: rdsStack.rdsHost,
-  });
+//  new HelmGatewayStack(app, 'HelmGatewayStack', {
+//    config: config,
+//    eksCluster: eksStack.cluster,
+//    //chartName: config.CHART_NAME,
+//    externalDomain: config.EXTERNAL_DOMAIN,
+//    certArn: config.CERT_ARN,
+//    registryUrl: config.REGISTRY_URL,
+//    rdsHost: rdsStack.rdsHost,
+//  });
+  
 };
 
 // Function to deploy BAP environment
@@ -102,6 +100,11 @@ const deploySandbox = () => {
   // new RabbitMqStack(app, 'RabbitMqStack', { vpc: vpcStack.vpc, env });
   
   new HelmBAPStack(app, 'HelmBAPStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    env,
+  });
+  new HelmRegistryStack(app, 'HelmRegistryStack', {
     config: config,
     eksCluster: eksStack.cluster,
     env,

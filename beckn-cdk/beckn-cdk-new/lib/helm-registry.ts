@@ -5,39 +5,34 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ConfigProps } from './config';
 
-interface HelmRegistryStackProps extends cdk.StackProps {
+  interface HelmRegistryStackProps extends StackProps {
     config: ConfigProps;
     eksCluster: eks.Cluster;
-    chartName: string;
-    externalDomain: string;
-    certArn: string;
-    rdsHost: string;
-  }
+}
 
 export class HelmRegistryStack extends Stack {
   constructor(scope: Construct, id: string, props: HelmRegistryStackProps) {
     super(scope, id, props);
 
     const eksCluster = props.eksCluster;
-    const chartName = props.chartName;
-    const externalDomain = props.externalDomain;
-    const certArn = props.certArn;
+    // const chartName = props.chartName;
+    const externalDomain = props.config.EXTERNAL_DOMAIN;
+    const certArn = props.config.CERT_ARN;
     const namespace = props.config.NAMESPACE;
     const releaseName = props.config.REGISTRY_RELEASE_NAME;
     const repository = props.config.REPOSITORY;
 
-    const rdsHost = props.rdsHost;
+    const rdsHost = props.config.RDS_HOST;
     const rdsPassword = props.config.RDS_PASSWORD;
 
     new helm.HelmChart(this, "registryhelm", {
         cluster: eksCluster,
-        chart: chartName,
-        namespace: namespace,
+        chart: "beckn-onix-registry",
+        // namespace: namespace, # Not required for registry or other Beckn-ONIX chart. Pls remove it.
         release: releaseName,
         wait: true,
         repository: repository,
         values: {
-            global: {
                 externalDomain: externalDomain,
                 database: {
                     host: rdsHost,
@@ -49,7 +44,6 @@ export class HelmRegistryStack extends Stack {
                         certificateArn: certArn,
                     },
                 },
-            }
         }
 
     });
