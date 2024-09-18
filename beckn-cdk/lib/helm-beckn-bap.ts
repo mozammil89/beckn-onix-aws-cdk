@@ -18,8 +18,8 @@ export class HelmBAPStack extends Stack {
         
         const eksCluster = props.eksCluster;
 
-        const namespace = props.config.NAMESPACE;
-        const releaseName = props.config.BAP_RELEASE_NAME;
+        const namespace = "bap" + props.config.NAMESPACE;
+        // const releaseName = props.config.BAP_RELEASE_NAME;
         const repository = "https://charts.bitnami.com/bitnami";
 
         const generateRandomPassword = (length: number) => {
@@ -31,7 +31,7 @@ export class HelmBAPStack extends Stack {
             cluster: eksCluster,
             chart: "bitnami/redis",
             namespace: namespace,
-            release: releaseName + "-redis",
+            // release: releaseName + "-redis",
             wait: true,
             repository: repository,
             values: {
@@ -55,7 +55,7 @@ export class HelmBAPStack extends Stack {
             cluster: eksCluster,
             chart: "bitnami/mongodb",
             namespace: namespace,
-            release: releaseName + "-mongodb",
+            // release: releaseName + "-mongodb",
             wait: true,
             repository: repository,
             values: {
@@ -71,7 +71,7 @@ export class HelmBAPStack extends Stack {
             cluster: eksCluster,
             chart: "bitnami/rabbitmq",
             namespace: namespace,
-            release: releaseName + "-rabbitmq",
+            // release: releaseName + "-rabbitmq",
             wait: true,
             repository: repository,
             values: {
@@ -82,7 +82,7 @@ export class HelmBAPStack extends Stack {
                     },
                     auth: {
                         username: "beckn",
-                        password: ""
+                        password: rabbitMQPassword
                     }
                 }
             }

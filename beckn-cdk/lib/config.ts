@@ -33,7 +33,7 @@ export const getConfig = (): ConfigProps => ({
     ACCOUNT: process.env.ACCOUNT || "",
     REPOSITORY: "",
     MAX_AZS: Number(process.env.MAZ_AZs) || 2,
-    NAMESPACE: "beckn-onix-name-space",
+    NAMESPACE: "-common-services",
     REGISTRY_RELEASE_NAME: "rls-name-registry",
     GATEWAY_RELEASE_NAME: "rls-name-gateway",
     BAP_RELEASE_NAME: "rls-name-bap",
