@@ -5,55 +5,47 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ConfigProps } from './config';
 
-interface HelmRegistryStackProps extends cdk.StackProps {
+interface HelmGAtewayStackProps extends cdk.StackProps {
     config: ConfigProps;
     eksCluster: eks.Cluster;
-    chartName: string;
-    externalDomain: string;
-    registryUrl: string;
-    certArn: string;
     rdsHost: string;
+    rdsPassword: string;
   }
 
 export class HelmGatewayStack extends Stack {
-  constructor(scope: Construct, id: string, props: HelmRegistryStackProps) {
+  constructor(scope: Construct, id: string, props: HelmGAtewayStackProps) {
     super(scope, id, props);
 
     const eksCluster = props.eksCluster;
-    const chartName = props.chartName;
-    const externalDomain = props.externalDomain;
-    const certArn = props.certArn;
-    const registryUrl = props.registryUrl;
+    const externalDomain = props.config.EXTERNAL_DOMAIN;
+    const certArn = props.config.CERT_ARN;
+    const registryUrl = props.config.REGISTRY_URL;
 
-    const namespace = props.config.NAMESPACE; // add namespace to the config file
-    const releaseName = props.config.GATEWAY_RELEASE_NAME; // add release name to the config file
+    const releaseName = props.config.GATEWAY_RELEASE_NAME;
     const repository = props.config.REPOSITORY;
 
     const rdsHost = props.rdsHost;
-    const rdsPassword = props.config.RDS_PASSWORD;
+    const rdsPassword = props.rdsPassword;
 
     new helm.HelmChart(this, "gatewayhelm", {
         cluster: eksCluster,
-        chart: chartName,
-        namespace: namespace,
+        chart: "beckn-onix-gateway",
         release: releaseName,
-        wait: true,
+        wait: false,
         repository: repository,
         values: {
-            global: {
-                externalDomain: externalDomain,
-                registry_url: registryUrl,
-                database: {
-                    host: rdsHost,
-                    password: rdsPassword,
+            externalDomain: externalDomain,
+            registry_url: registryUrl,
+            database: {
+                host: rdsHost,
+                password: rdsPassword,
+            },
+            ingress: {
+                tls: 
+                {
+                    certificateArn: certArn,
                 },
-                ingress: {
-                    tls: 
-                    {
-                        certificateArn: certArn,
-                    },
-                },
-            }
+            },
         }
 
     });
