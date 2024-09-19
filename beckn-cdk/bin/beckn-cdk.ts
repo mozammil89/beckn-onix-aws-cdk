@@ -73,10 +73,14 @@ const deployGateway = () => {
 const deployBAP = () => {
   const vpcStack = new VpcStack(app, 'BapVpcStack', { config: config, env });
   const eksStack = new EksStack(app, 'BapEksStack', {config: config, vpc: vpcStack.vpc, env });
-  new DocumentDbStack(app, 'BapDocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
-  new RedisStack(app, 'BapRedisStack', { vpc: vpcStack.vpc, env });
-  new RabbitMqStack(app, 'BapRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
 
+  // aws common services deployed through aws managed services
+  // rabbit mq - 
+  // new DocumentDbStack(app, 'BapDocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
+  // new RedisStack(app, 'BapRedisStack', { vpc: vpcStack.vpc, env });
+  // new RabbitMqStack(app, 'BapRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
+
+  // bitnami - common services on eks - self hosted
   new HelmCommonServicesStack(app, 'HelmBapCommonServicesStack', {
     config: config,
     eksCluster: eksStack.cluster,
@@ -87,6 +91,8 @@ const deployBAP = () => {
   new HelmBapStack(app, 'HelmBapStack', {
     config: config,
     eksCluster: eksStack.cluster,
+    vpc: vpcStack.vpc,
+    isSandbox: false,
     env,
   });
 
@@ -96,10 +102,13 @@ const deployBAP = () => {
 const deployBPP = () => {
   const vpcStack = new VpcStack(app, 'BppVpcStack', {config: config, env });
   const eksStack = new EksStack(app, 'BppEksStack', {config: config, vpc: vpcStack.vpc, env });
-  new DocumentDbStack(app, 'BppDocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
-  new RedisStack(app, 'BppRedisStack', { vpc: vpcStack.vpc, env });
-  new RabbitMqStack(app, 'BppRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
 
+  //if aws
+  // new DocumentDbStack(app, 'BppDocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
+  // new RedisStack(app, 'BppRedisStack', { vpc: vpcStack.vpc, env });
+  // new RabbitMqStack(app, 'BppRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
+
+  // if bitnami
   new HelmCommonServicesStack(app, 'HelmBapCommonServicesStack', {
     config: config,
     eksCluster: eksStack.cluster,
@@ -110,6 +119,8 @@ const deployBPP = () => {
   new HelmBppStack(app, 'HelmBppStack', {
     config: config,
     eksCluster: eksStack.cluster,
+    vpc: vpcStack.vpc,
+    isSandbox: false,
     env,
   });
 };
@@ -121,16 +132,6 @@ const deploySandbox = () => {
   const eksStack = new EksStack(app, 'EksStack', {config: config, vpc: vpcStack.vpc, env });
   const rdsStack = new RdsStack(app, 'RdsStack', { config: config, vpc: vpcStack.vpc, envC: envC, env });
   
-  new DocumentDbStack(app, 'DocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
-  new RedisStack(app, 'RedisStack', { vpc: vpcStack.vpc, env });
-  new RabbitMqStack(app, 'RabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
-  
-  new HelmCommonServicesStack(app, 'HelmBAPStack', {
-    config: config,
-    eksCluster: eksStack.cluster,
-    service: 'bpp',
-    env,
-  });
   new HelmRegistryStack(app, 'HelmRegistryStack', {
     config: config,
     rdsHost: rdsStack.rdsHost,
@@ -138,11 +139,48 @@ const deploySandbox = () => {
     eksCluster: eksStack.cluster,
     env,
   });
+
   new HelmGatewayStack(app, 'HelmGatewayStack', {
     config: config,
     rdsHost: rdsStack.rdsHost,
     rdsPassword: rdsStack.rdsPassword,
     eksCluster: eksStack.cluster,
+    env,
+  });
+
+  // aws
+  // new DocumentDbStack(app, 'DocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
+  // new RedisStack(app, 'RedisStack', { vpc: vpcStack.vpc, env });
+  // new RabbitMqStack(app, 'RabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
+  
+  // default - bitnami
+  new HelmCommonServicesStack(app, 'HelmBAPStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    service: 'bap',
+    env,
+  });
+
+  new HelmCommonServicesStack(app, 'HelmBAPStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    service: 'bpp',
+    env,
+  });
+
+  new HelmBapStack(app, 'HelmBapStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    vpc: vpcStack.vpc,
+    isSandbox: true,
+    env,
+  });
+
+  new HelmBppStack(app, 'HelmBppStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    vpc: vpcStack.vpc,
+    isSandbox: true,
     env,
   });
 };

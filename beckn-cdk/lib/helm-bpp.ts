@@ -4,13 +4,14 @@ import * as helm from 'aws-cdk-lib/aws-eks';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ConfigProps } from './config';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as efs from 'aws-cdk-lib/aws-efs';
 
 interface HelmBppStackProps extends StackProps {
   config: ConfigProps;
+  vpc: ec2.Vpc;
+  isSandbox: boolean;
   eksCluster: eks.Cluster;
-  bppPrivateKey: string;
-  bppPublicKey: string;
-  efsBppFileSystemId: string;
 }
 
 export class HelmBppStack extends Stack {
@@ -23,12 +24,14 @@ export class HelmBppStack extends Stack {
     const releaseName = props.config.BPP_RELEASE_NAME;
     const repository = props.config.REPOSITORY;
     const registryUrl = props.config.REGISTRY_URL;
-    const bppPrivateKey = props.bppPrivateKey;
-    const bppPublicKey = props.bppPublicKey;
-    const efsBppFileSystemId = props.efsBppFileSystemId
 
-    const efsBapFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
-      vpc: vpc,
+    const bppPrivateKey = props.config.BPP_PRIVATE_KEY;
+    const bppPublicKey = props.config.BPP_PUBLIC_KEY;
+
+    const isSandbox = props.isSandbox;
+
+    const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+      vpc: props.vpc,
     });
 
     new helm.HelmChart(this, 'Bpphelm', {
@@ -39,6 +42,7 @@ export class HelmBppStack extends Stack {
       repository: repository,
       values: {
         global: {
+          isSandbox: isSandbox,
           externalDomain: externalDomain,
           registry_url: registryUrl,
           bap: {
@@ -57,7 +61,7 @@ export class HelmBppStack extends Stack {
       },
     });
     new cdk.CfnOutput(this, String("EksFileSystemId"), {
-      value: efsBapFileSystemId.fileSystemId,
-  });
+        value: efsBppFileSystemId.fileSystemId,
+    });
   }
 }

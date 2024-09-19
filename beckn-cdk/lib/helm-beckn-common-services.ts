@@ -52,7 +52,7 @@ export class HelmCommonServicesStack extends Stack {
         new helm.HelmChart(this, "MongoDBHelmChart", {
             cluster: eksCluster,
             chart: "mongodb",
-            // namespace: service + namespace,
+            namespace: service + namespace,
             release: "mongodb",
             wait: false,
             repository: repository,
@@ -66,7 +66,7 @@ export class HelmCommonServicesStack extends Stack {
         new helm.HelmChart(this, "RabbitMQHelmChart", {
             cluster: eksCluster,
             chart: "rabbitmq",
-            // namespace: service + namespace,
+            namespace: service + namespace,
             release: "rabbitmq",
             wait: false,
             repository: repository,
@@ -82,9 +82,5 @@ export class HelmCommonServicesStack extends Stack {
             }
         });
 
-        new cdk.CfnOutput(this, 'RabbitMQPasswordOutput', {
-            value: rabbitMQPassword,
-            description: 'Generated password for RabbitMQ'
-        });
     }
 }

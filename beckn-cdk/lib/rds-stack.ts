@@ -21,7 +21,7 @@ export class RdsStack extends cdk.Stack {
     super(scope, id, props);
 
     const vpc = props.vpc;
-    const dbName = "beckn-onix-db-" + props.envC;
+    const dbName = props.envC;
     const rdsUser = props.config.RDS_USER; // take input from user / make it 
     const rdsPassword = this.createPassword();
     const rdsSecGrpIngress = props.config.CIDR;

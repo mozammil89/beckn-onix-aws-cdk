@@ -24,6 +24,10 @@ export type ConfigProps = {
     DOCDB_PASSWORD: string;
     RABBITMQ_PASSWORD: string;
     NAMESPACE: string;
+    BAP_PUBLIC_KEY: string;
+    BAP_PRIVATE_KEY: string;
+    BPP_PUBLIC_KEY: string;
+    BPP_PRIVATE_KEY: string;
 };
 
 export const getConfig = (): ConfigProps => ({
@@ -31,8 +35,8 @@ export const getConfig = (): ConfigProps => ({
     ACCOUNT: process.env.ACCOUNT || "",
     REPOSITORY: process.env.REPOSITORY || "",
     MAX_AZS: Number(process.env.MAZ_AZs) || 2,
-    REGISTRY_RELEASE_NAME: "registry",
-    GATEWAY_RELEASE_NAME: "gateway",
+    REGISTRY_RELEASE_NAME: "beckn-onix-registry",
+    GATEWAY_RELEASE_NAME: "beckn-onix-gateway",
     BAP_RELEASE_NAME: "beckn-onix-bap",
     BPP_RELEASE_NAME: "beckn-onix-bpp",
     RDS_USER: process.env.RDS_USER || "postgres",
@@ -46,5 +50,9 @@ export const getConfig = (): ConfigProps => ({
     ROLE_ARN: process.env.ROLE_ARN || "",
     DOCDB_PASSWORD: process.env.DOCDB_PASSWORD || "",
     RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD || "",
-    NAMESPACE: "-common-services"
+    NAMESPACE: "-common-services",
+    BAP_PUBLIC_KEY: process.env.BAP_PUBLIC_KEY || "",
+    BAP_PRIVATE_KEY: process.env.BAP_PRIVATE_KEY || "",
+    BPP_PUBLIC_KEY: process.env.BPP_PUBLIC_KEY || "",
+    BPP_PRIVATE_KEY: process.env.BPP_PRIVATE_KEY || "",
 });

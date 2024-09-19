@@ -5,13 +5,13 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ConfigProps } from './config';
 import * as efs from 'aws-cdk-lib/aws-efs';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
 interface HelmBapStackProps extends StackProps {
   config: ConfigProps;
   eksCluster: eks.Cluster;
-  bapPrivateKey: string;
-  bapPublicKey: string;
-  efsBapFileSystemId: string;
+  isSandbox: boolean;
+  vpc: ec2.Vpc;
 }
 
 export class HelmBapStack extends Stack {
@@ -24,11 +24,13 @@ export class HelmBapStack extends Stack {
     const releaseName = props.config.BAP_RELEASE_NAME;
     const repository = props.config.REPOSITORY;
     const registryUrl = props.config.REGISTRY_URL;
-    const bapPrivateKey = props.bapPrivateKey;
-    const bapPublicKey = props.bapPublicKey;
+    const bapPrivateKey = props.config.BAP_PRIVATE_KEY;
+    const bapPublicKey = props.config.BAP_PUBLIC_KEY;
+
+    const isSandbox = props.isSandbox;
 
     const efsBapFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
-      vpc: props.,
+      vpc: props.vpc,
     });
     
     new helm.HelmChart(this, 'baphelm', {
@@ -39,6 +41,7 @@ export class HelmBapStack extends Stack {
       repository: repository,
       values: {
         global: {
+          isSandbox: isSandbox,
           externalDomain: externalDomain,
           registry_url: registryUrl,
           bap: {
@@ -56,8 +59,9 @@ export class HelmBapStack extends Stack {
         },
       },
     });
+    
     new cdk.CfnOutput(this, String("EksFileSystemId"), {
-      value: efsBapFileSystemId.fileSystemId,
-  });
+        value: efsBapFileSystemId.fileSystemId,
+    });
   }
 }
