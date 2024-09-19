@@ -4,47 +4,81 @@ import * as rds from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 import { ConfigProps } from './config';
 import cluster from 'cluster';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 
 export interface RdsStackProps extends cdk.StackProps {
   config: ConfigProps;
+  envC: string;
   vpc: ec2.Vpc;
 }
 
 export class RdsStack extends cdk.Stack {
   public readonly rdsSecret: string;
   public readonly rdsHost: string;
+  public readonly rdsPassword: string;
 
   constructor(scope: Construct, id: string, props: RdsStackProps) {
     super(scope, id, props);
 
-    // Security group for RDS
-    const dbSecurityGroup = new ec2.SecurityGroup(this, 'DatabaseSecurityGroup', {
-      vpc: props.vpc,
-      description: 'Security group for Aurora PostgreSQL database',
+    const vpc = props.vpc;
+    const dbName = "beckn-onix-db-" + props.envC;
+    const rdsUser = props.config.RDS_USER; // take input from user / make it 
+    const rdsPassword = this.createPassword();
+    const rdsSecGrpIngress = props.config.CIDR;
+    
+    const securityGroupRDS = new ec2.SecurityGroup(this, 'RdsSecurityGroup', {
+      vpc: vpc,
       allowAllOutbound: true,
+      description: 'Security group for Aurora PostgreSQL database',
     });
 
-    dbSecurityGroup.addIngressRule(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(5432), 'Allow Postgres access');
+    securityGroupRDS.addIngressRule(
+      ec2.Peer.ipv4(rdsSecGrpIngress),
+      ec2.Port.tcp(5432),
+      "Allow Postgress Access"
+    );
 
-    // Create Aurora PostgreSQL database cluster
+    const creds = new Secret(this, "rdsSecret", {
+      secretObjectValue: {
+        username: cdk.SecretValue.unsafePlainText(rdsUser.toString()),
+        password: cdk.SecretValue.unsafePlainText(rdsPassword.toString()),
+      },
+    });
+
     const cluster = new rds.DatabaseCluster(this, 'AuroraCluster', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_13_15,
+        version: rds.AuroraPostgresEngineVersion.VER_14_6,
       }),
+      credentials: rds.Credentials.fromSecret(creds),
       instances: 2,
       instanceProps: {
         vpc: props.vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
-        securityGroups: [dbSecurityGroup],
+        securityGroups: [securityGroupRDS],
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM),
       },
-      credentials: rds.Credentials.fromGeneratedSecret('dbadmin'),
-      defaultDatabaseName: 'MyDatabase',
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // Destroy cluster when stack is deleted (useful for development)
+      defaultDatabaseName: dbName,
     });
 
+    this.rdsSecret = creds.secretArn;
     this.rdsHost = cluster.clusterEndpoint.hostname;
+    this.rdsPassword = rdsPassword;
+
+    new cdk.CfnOutput(this, 'RDSPasswordOutput', {
+      value: rdsPassword,
+      exportName: `RDSPassword-${dbName}`,
+    })
+  }
+
+  //generate password function
+  private createPassword(length: number = 12): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,-.:;<=>?[]^_`{|}~';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return password;
   }
 }

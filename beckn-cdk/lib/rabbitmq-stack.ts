@@ -3,11 +3,13 @@ import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as amazonmq from 'aws-cdk-lib/aws-amazonmq';
 import * as dotenv from 'dotenv';
+import { ConfigProps } from './config';
 
 // Load environment variables from .env file
 dotenv.config();
 
 interface RabbitMqStackProps extends cdk.StackProps {
+  config: ConfigProps;
   vpc: ec2.Vpc;
 }
 
@@ -20,7 +22,7 @@ export class RabbitMqStack extends cdk.Stack {
       type: 'String',
       description: 'The password for the RabbitMQ broker admin user',
       noEcho: true,  // Ensure the password is hidden from the console
-      default: process.env.CDK_DEPLOY_RABBITMQ_PASSWORD || '',  // Use the password from .env or set a fallback
+      default: props.config.RABBITMQ_PASSWORD || '',  // Use the password from .env or set a fallback
     });
 
     // Security group for RabbitMQ

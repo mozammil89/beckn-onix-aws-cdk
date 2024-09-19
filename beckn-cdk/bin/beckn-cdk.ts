@@ -12,7 +12,7 @@ import { RabbitMqStack } from '../lib/rabbitmq-stack';
 
 import { HelmRegistryStack } from '../lib/helm-registry';
 import { HelmGatewayStack } from '../lib/helm-gateway';
-import { HelmBAPStack } from '../lib/helm-beckn-bap';
+import { HelmCommonServicesStack } from '../lib/helm-beckn-common-services';
 
 const config = getConfig();
 const app = new cdk.App();
@@ -35,49 +35,50 @@ const env = { account: accountId, region: region };
 
 // Function to deploy registry environment
 const deployRegistry = () => {
+  var envC = "registry";
   const vpcStack = new VpcStack(app, 'RegistryVpcStack', { config: config, env });
   const eksStack = new EksStack(app, 'RegistryEksStack', { config: config, vpc: vpcStack.vpc, env });
-  const rdsStack = new RdsStack(app, 'RegistryRdsStack', { config: config, vpc: vpcStack.vpc, env });
+  const rdsStack = new RdsStack(app, 'RegistryRdsStack', { config: config, vpc: vpcStack.vpc, envC: envC, env });
 
   new HelmRegistryStack(app, 'HelmRegistryStack', {
-    externalDomain: config.EXTERNAL_DOMAIN,
-    certArn: config.CERT_ARN,
-    chartName: config.CHART_NAME,
     config: config,
-    eksCluster: eksStack.cluster,
     rdsHost: rdsStack.rdsHost,
+    rdsPassword: rdsStack.rdsPassword,
+    eksCluster: eksStack.cluster,
+    env,
   });
 };
 
 // Function to deploy gateway environment
 const deployGateway = () => {
+  var envC = "gateway";
   const vpcStack = new VpcStack(app, 'GatewayVpcStack', { config: config, env });
   const eksStack = new EksStack(app, 'GatewayEksStack', { config: config, vpc: vpcStack.vpc, env });
-  const rdsStack = new RdsStack(app, 'GatewayRdsStack', { config: config, vpc: vpcStack.vpc, env });
+  const rdsStack = new RdsStack(app, 'GatewayRdsStack', { config: config, vpc: vpcStack.vpc, envC: envC, env });
 
   new HelmGatewayStack(app, 'HelmGatewayStack', {
     config: config,
-    eksCluster: eksStack.cluster,
-    chartName: config.CHART_NAME,
-    externalDomain: config.EXTERNAL_DOMAIN,
-    certArn: config.CERT_ARN,
-    registryUrl: config.REGISTRY_URL,
     rdsHost: rdsStack.rdsHost,
+    rdsPassword: rdsStack.rdsPassword,
+    eksCluster: eksStack.cluster,
+    env,
   });
+  
 };
 
 // Function to deploy BAP environment
 const deployBAP = () => {
-  // const var = "-bap";
   const vpcStack = new VpcStack(app, 'BapVpcStack', { config: config, env });
   const eksStack = new EksStack(app, 'BapEksStack', {config: config, vpc: vpcStack.vpc, env });
-  new DocumentDbStack(app, 'BapDocumentDbStack', { vpc: vpcStack.vpc, env });
+  new DocumentDbStack(app, 'BapDocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
   new RedisStack(app, 'BapRedisStack', { vpc: vpcStack.vpc, env });
-  new RabbitMqStack(app, 'BapRabbitMqStack', { vpc: vpcStack.vpc, env });
+  new RabbitMqStack(app, 'BapRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
 
-  new HelmBAPStack(app, 'HelmBAPStack', {
+  new HelmCommonServicesStack(app, 'HelmBAPStack', {
     config: config,
     eksCluster: eksStack.cluster,
+    service: 'bap',
+    env
   });
 
 };
@@ -85,24 +86,54 @@ const deployBAP = () => {
 // Function to deploy BPP environment
 const deployBPP = () => {
   const vpcStack = new VpcStack(app, 'BppVpcStack', {config: config, env });
-  new EksStack(app, 'BppEksStack', {config: config, vpc: vpcStack.vpc, env });
-  new DocumentDbStack(app, 'BppDocumentDbStack', { vpc: vpcStack.vpc, env });
+  const eksStack = new EksStack(app, 'BppEksStack', {config: config, vpc: vpcStack.vpc, env });
+  new DocumentDbStack(app, 'BppDocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
   new RedisStack(app, 'BppRedisStack', { vpc: vpcStack.vpc, env });
-  new RabbitMqStack(app, 'BppRabbitMqStack', { vpc: vpcStack.vpc, env });
+  new RabbitMqStack(app, 'BppRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
+
+  new HelmCommonServicesStack(app, 'HelmBPPStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    service: 'bpp',
+    env,
+  });
 };
 
 // Function to deploy sandbox environment (all stacks)
 const deploySandbox = () => {
+  var envC = "sandbox";
   const vpcStack = new VpcStack(app, 'VpcStack', {config: config, env });
-  new EksStack(app, 'EksStack', {config: config, vpc: vpcStack.vpc, env });
-  new RdsStack(app, 'RdsStack', { config: config, vpc: vpcStack.vpc, env });
-  new DocumentDbStack(app, 'DocumentDbStack', { vpc: vpcStack.vpc, env });
+  const eksStack = new EksStack(app, 'EksStack', {config: config, vpc: vpcStack.vpc, env });
+  const rdsStack = new RdsStack(app, 'RdsStack', { config: config, vpc: vpcStack.vpc, envC: envC, env });
+  
+  new DocumentDbStack(app, 'DocumentDbStack', { config: config, vpc: vpcStack.vpc, env });
   new RedisStack(app, 'RedisStack', { vpc: vpcStack.vpc, env });
-  new RabbitMqStack(app, 'RabbitMqStack', { vpc: vpcStack.vpc, env });
+  new RabbitMqStack(app, 'RabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
+  
+  new HelmCommonServicesStack(app, 'HelmBAPStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    service: 'bpp',
+    env,
+  });
+  new HelmRegistryStack(app, 'HelmRegistryStack', {
+    config: config,
+    rdsHost: rdsStack.rdsHost,
+    rdsPassword: rdsStack.rdsPassword,
+    eksCluster: eksStack.cluster,
+    env,
+  });
+  new HelmGatewayStack(app, 'HelmGatewayStack', {
+    config: config,
+    rdsHost: rdsStack.rdsHost,
+    rdsPassword: rdsStack.rdsPassword,
+    eksCluster: eksStack.cluster,
+    env,
+  });
 };
 
 // Retrieve the environment from CDK context
-const environment = app.node.tryGetContext('env') || 'sandbox';
+const environment = app.node.tryGetContext('env');
 
 // Deploy based on the selected environment
 switch (environment) {

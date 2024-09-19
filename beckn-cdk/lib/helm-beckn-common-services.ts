@@ -7,20 +7,20 @@ import { ConfigProps } from './config';
 import * as crypto from 'crypto';
 
 
-interface HelmBAPStackProps extends StackProps {
+interface HelmCommonServicesStackProps extends StackProps {
     config: ConfigProps;
     eksCluster: eks.Cluster;
+    service: string,
 }
 
-export class HelmBAPStack extends Stack {
-    constructor(scope: Construct, id: string, props: HelmBAPStackProps) {
+export class HelmCommonServicesStack extends Stack {
+    constructor(scope: Construct, id: string, props: HelmCommonServicesStackProps) {
         super(scope, id, props);
         
         const eksCluster = props.eksCluster;
-
-        const namespace = "bap" + props.config.NAMESPACE;
-        // const releaseName = props.config.BAP_RELEASE_NAME;
-        const repository = "https://charts.bitnami.com/bitnami";
+        const service = props.service;
+        // const repository = "https://charts.bitnami.com/bitnami";
+        const repository = props.config.REPOSITORY;
 
         const generateRandomPassword = (length: number) => {
             return crypto.randomBytes(length).toString('base64').slice(0, length);
@@ -30,55 +30,55 @@ export class HelmBAPStack extends Stack {
         new helm.HelmChart(this, "RedisHelmChart", {
             cluster: eksCluster,
             chart: "redis",
-            namespace: namespace,
+            // namespace: service + namespace,
             release: "redis",
-            wait: true,
+            wait: false,
             repository: repository,
             values: {
-                    auth: {
-                        enabled: false
-                    },
-                    replica: {
-                        replicaCount: 0
-                    },
-                    master: {
-                        persistence: {
-                            storageClass: "gp2"
-                        }
+                auth: {
+                    enabled: false
+                },
+                replica: {
+                    replicaCount: 0
+                },
+                master: {
+                    persistence: {
+                        storageClass: "gp2"
                     }
+                }
             }
         });
 
         new helm.HelmChart(this, "MongoDBHelmChart", {
             cluster: eksCluster,
             chart: "mongodb",
-            namespace: namespace,
+            // namespace: service + namespace,
             release: "mongodb",
-            wait: true,
+            wait: false,
             repository: repository,
             values: {
-                    persistence: {
-                        storageClass: "gp2"
-                    }
+                persistence: {
+                    storageClass: "gp2"
+                }
             }
         });
 
         new helm.HelmChart(this, "RabbitMQHelmChart", {
             cluster: eksCluster,
             chart: "rabbitmq",
-            namespace: namespace,
+            // namespace: service + namespace,
             release: "rabbitmq",
-            wait: true,
+            wait: false,
             repository: repository,
             values: {
-                    persistence: {
-                        enabled: true,
-                        storageClass: "gp2"
-                    },
-                    auth: {
-                        username: "beckn",
-                        password: rabbitMQPassword
-                    }
+                persistence: {
+                    enabled: true,
+                    storageClass: "gp2"
+                },
+                auth: {
+                    username: "beckn",
+                    password: rabbitMQPassword
+                }
             }
         });
 

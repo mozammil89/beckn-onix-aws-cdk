@@ -3,11 +3,13 @@ import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as docdb from 'aws-cdk-lib/aws-docdb';
 import * as dotenv from 'dotenv';
+import { ConfigProps } from './config';
 
 // Load environment variables from .env file
 dotenv.config();
 
 interface DocumentDbStackProps extends cdk.StackProps {
+  config: ConfigProps;
   vpc: ec2.Vpc;
 }
 
@@ -20,7 +22,7 @@ export class DocumentDbStack extends cdk.Stack {
       type: 'String',
       description: 'The password for the DocumentDB cluster admin user',
       noEcho: true,
-      default: process.env.CDK_DEPLOY_DOCDB_PASSWORD || '',  // Use environment variable
+      default: props.config.DOCDB_PASSWORD || '',  // Use environment variable
     });
 
     // Security group for DocumentDB

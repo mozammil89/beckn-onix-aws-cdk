@@ -6,19 +6,14 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 export type ConfigProps = {
     REGION: string,
     ACCOUNT: string,
-    // CIDR
-    // MAX_AZS
     REPOSITORY: string,
-    NAMESPACE: string,
     REGISTRY_RELEASE_NAME: string;
     GATEWAY_RELEASE_NAME: string;
     BAP_RELEASE_NAME: string;
     BPP_RELEASE_NAME: string,
     RDS_USER: string,
-    RDS_PASSWORD: string,
     EXTERNAL_DOMAIN: string,
     CERT_ARN: string,
-    CHART_NAME: string,
     REGISTRY_URL: string,
     MAX_AZS: number,
     EKS_CLUSTER_NAME: string,
@@ -26,27 +21,28 @@ export type ConfigProps = {
     EC2_NODES_COUNT: number;
     EC2_INSTANCE_TYPE: string;
     ROLE_ARN: string;
+    DOCDB_PASSWORD: string;
+    RABBITMQ_PASSWORD: string;
 };
 
 export const getConfig = (): ConfigProps => ({
     REGION: process.env.REGION || "ap-south-1",
     ACCOUNT: process.env.ACCOUNT || "",
-    REPOSITORY: "",
+    REPOSITORY: process.env.REPOSITORY || "",
     MAX_AZS: Number(process.env.MAZ_AZs) || 2,
-    NAMESPACE: "-common-services",
-    REGISTRY_RELEASE_NAME: "rls-name-registry",
-    GATEWAY_RELEASE_NAME: "rls-name-gateway",
-    BAP_RELEASE_NAME: "rls-name-bap",
-    BPP_RELEASE_NAME: "rls-name-bpp",
-    RDS_USER: process.env.RDS_USER || "",
-    RDS_PASSWORD: "dummy_password",
-    EXTERNAL_DOMAIN: "", // user must provide it
-    CERT_ARN: "", // user must provide it
-    CHART_NAME: "", // chart name
-    REGISTRY_URL: "", // bitnami specification
+    REGISTRY_RELEASE_NAME: "registry",
+    GATEWAY_RELEASE_NAME: "gateway",
+    BAP_RELEASE_NAME: "beckn-onix-bap",
+    BPP_RELEASE_NAME: "beckn-onix-bpp",
+    RDS_USER: process.env.RDS_USER || "postgres",
+    EXTERNAL_DOMAIN: process.env.EXTERNAL_DOMAIN || "", // user must provide it
+    CERT_ARN: process.env.CERT_ARN || "", // user must provide it
+    REGISTRY_URL: process.env.REGISTRY_URL || "", // beckn-onix reg url
     EKS_CLUSTER_NAME: process.env.EKS_CLUSTER_NAME || "beckn-onix",
     CIDR: process.env.CIDR || "10.0.0.0/16",
     EC2_NODES_COUNT: Number(process.env.EC2_NODES_COUNT) || 2,
     EC2_INSTANCE_TYPE: process.env.EC2_INSTANCE_TYPE || "t3.medium",
     ROLE_ARN: process.env.ROLE_ARN || "",
+    DOCDB_PASSWORD: process.env.DOCDB_PASSWORD || "",
+    RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD || "",
 });
