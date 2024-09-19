@@ -23,6 +23,7 @@ export type ConfigProps = {
     ROLE_ARN: string;
     DOCDB_PASSWORD: string;
     RABBITMQ_PASSWORD: string;
+    NAMESPACE: string;
 };
 
 export const getConfig = (): ConfigProps => ({
@@ -45,4 +46,5 @@ export const getConfig = (): ConfigProps => ({
     ROLE_ARN: process.env.ROLE_ARN || "",
     DOCDB_PASSWORD: process.env.DOCDB_PASSWORD || "",
     RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD || "",
+    NAMESPACE: "-common-services"
 });

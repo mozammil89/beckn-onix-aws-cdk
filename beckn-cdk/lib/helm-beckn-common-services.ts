@@ -19,8 +19,8 @@ export class HelmCommonServicesStack extends Stack {
         
         const eksCluster = props.eksCluster;
         const service = props.service;
-        // const repository = "https://charts.bitnami.com/bitnami";
-        const repository = props.config.REPOSITORY;
+        const repository = "https://charts.bitnami.com/bitnami";
+        const namespace = props.config.NAMESPACE;
 
         const generateRandomPassword = (length: number) => {
             return crypto.randomBytes(length).toString('base64').slice(0, length);
@@ -30,7 +30,7 @@ export class HelmCommonServicesStack extends Stack {
         new helm.HelmChart(this, "RedisHelmChart", {
             cluster: eksCluster,
             chart: "redis",
-            // namespace: service + namespace,
+            namespace: service + namespace,
             release: "redis",
             wait: false,
             repository: repository,

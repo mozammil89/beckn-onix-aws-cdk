@@ -2,7 +2,6 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as cdk from 'aws-cdk-lib';
-import * as efs from 'aws-cdk-lib/aws-efs';
 
 import { KubectlV30Layer } from '@aws-cdk/lambda-layer-kubectl-v30';
 // import { CfnAutoScalingGroup } from 'aws-cdk-lib/aws-autoscaling';
@@ -180,20 +179,12 @@ export class EksStack extends cdk.Stack {
     //   }),
     // ]);
 
-    const fileSystem = new efs.FileSystem(this, 'Beckn-Onix-', {
-      vpc: vpc,
-    });
-
     new cdk.CfnOutput(this, String("OIDC-issuer"), {
         value: this.cluster.clusterOpenIdConnectIssuer,
     });
 
     new cdk.CfnOutput(this, String("OIDC-issuerURL"), {
         value: this.cluster.clusterOpenIdConnectIssuerUrl,
-    });
-
-    new cdk.CfnOutput(this, String("EksFileSystemId"), {
-        value: fileSystem.fileSystemId,
     });
 
     new cdk.CfnOutput(this, "EKS Cluster Name", {

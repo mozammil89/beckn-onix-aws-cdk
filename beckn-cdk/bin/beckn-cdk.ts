@@ -13,6 +13,9 @@ import { RabbitMqStack } from '../lib/rabbitmq-stack';
 import { HelmRegistryStack } from '../lib/helm-registry';
 import { HelmGatewayStack } from '../lib/helm-gateway';
 import { HelmCommonServicesStack } from '../lib/helm-beckn-common-services';
+import { HelmBapStack } from '../lib/helm-bap';
+import { HelmBppStack } from '../lib/helm-bpp';
+
 
 const config = getConfig();
 const app = new cdk.App();
@@ -74,11 +77,17 @@ const deployBAP = () => {
   new RedisStack(app, 'BapRedisStack', { vpc: vpcStack.vpc, env });
   new RabbitMqStack(app, 'BapRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
 
-  new HelmCommonServicesStack(app, 'HelmBAPStack', {
+  new HelmCommonServicesStack(app, 'HelmBapCommonServicesStack', {
     config: config,
     eksCluster: eksStack.cluster,
     service: 'bap',
-    env
+    env,
+  });
+
+  new HelmBapStack(app, 'HelmBapStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
+    env,
   });
 
 };
@@ -91,10 +100,16 @@ const deployBPP = () => {
   new RedisStack(app, 'BppRedisStack', { vpc: vpcStack.vpc, env });
   new RabbitMqStack(app, 'BppRabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
 
-  new HelmCommonServicesStack(app, 'HelmBPPStack', {
+  new HelmCommonServicesStack(app, 'HelmBapCommonServicesStack', {
     config: config,
     eksCluster: eksStack.cluster,
     service: 'bpp',
+    env,
+  });
+
+  new HelmBppStack(app, 'HelmBppStack', {
+    config: config,
+    eksCluster: eksStack.cluster,
     env,
   });
 };
