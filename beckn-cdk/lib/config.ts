@@ -12,7 +12,6 @@ export type ConfigProps = {
     BAP_RELEASE_NAME: string;
     BPP_RELEASE_NAME: string,
     RDS_USER: string,
-    EXTERNAL_DOMAIN: string,
     CERT_ARN: string,
     REGISTRY_URL: string,
     MAX_AZS: number,
@@ -28,19 +27,23 @@ export type ConfigProps = {
     BAP_PRIVATE_KEY: string;
     BPP_PUBLIC_KEY: string;
     BPP_PRIVATE_KEY: string;
+    REGISTRY_EXTERNAL_DOMAIN: string,
+    GATEWAY_EXTERNAL_DOMAIN: string;
+    BAP_EXTERNAL_DOMAIN: string;
+    BPP_EXTERNAL_DOMAIN: string;
+    
 };
 
 export const getConfig = (): ConfigProps => ({
     REGION: process.env.REGION || "ap-south-1",
     ACCOUNT: process.env.ACCOUNT || "",
-    REPOSITORY: process.env.REPOSITORY || "",
+    REPOSITORY: process.env.BECKN_ONIX_HELM_REPOSITORY || "",
     MAX_AZS: Number(process.env.MAZ_AZs) || 2,
     REGISTRY_RELEASE_NAME: "beckn-onix-registry",
     GATEWAY_RELEASE_NAME: "beckn-onix-gateway",
     BAP_RELEASE_NAME: "beckn-onix-bap",
     BPP_RELEASE_NAME: "beckn-onix-bpp",
     RDS_USER: process.env.RDS_USER || "postgres",
-    EXTERNAL_DOMAIN: process.env.EXTERNAL_DOMAIN || "", // user must provide it
     CERT_ARN: process.env.CERT_ARN || "", // user must provide it
     REGISTRY_URL: process.env.REGISTRY_URL || "", // beckn-onix reg url
     EKS_CLUSTER_NAME: process.env.EKS_CLUSTER_NAME || "beckn-onix",
@@ -55,4 +58,10 @@ export const getConfig = (): ConfigProps => ({
     BAP_PRIVATE_KEY: process.env.BAP_PRIVATE_KEY || "",
     BPP_PUBLIC_KEY: process.env.BPP_PUBLIC_KEY || "",
     BPP_PRIVATE_KEY: process.env.BPP_PRIVATE_KEY || "",
+    REGISTRY_EXTERNAL_DOMAIN: process.env.REGISTRY_EXTERNAL_DOMAIN || "", // user must provide it
+    GATEWAY_EXTERNAL_DOMAIN: process.env.GATEWAY_EXTERNAL_DOMAIN || "", // user must provide it
+    BAP_EXTERNAL_DOMAIN: process.env.BAP_EXTERNAL_DOMAIN || "", // user must provide it
+    BPP_EXTERNAL_DOMAIN: process.env.BPP_EXTERNAL_DOMAIN || "", // user must provide it
+
+
 });

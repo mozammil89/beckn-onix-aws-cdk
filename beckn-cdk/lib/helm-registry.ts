@@ -17,7 +17,7 @@ export class HelmRegistryStack extends Stack {
     super(scope, id, props);
 
     const eksCluster = props.eksCluster;
-    const externalDomain = props.config.EXTERNAL_DOMAIN;
+    const externalDomain = props.config.REGISTRY_EXTERNAL_DOMAIN;
     const certArn = props.config.CERT_ARN;
     const releaseName = props.config.REGISTRY_RELEASE_NAME;
     const repository = props.config.REPOSITORY;

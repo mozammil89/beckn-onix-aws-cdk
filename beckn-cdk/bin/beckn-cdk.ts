@@ -154,14 +154,14 @@ const deploySandbox = () => {
   // new RabbitMqStack(app, 'RabbitMqStack', { config: config, vpc: vpcStack.vpc, env });
   
   // default - bitnami
-  new HelmCommonServicesStack(app, 'HelmBAPStack', {
+  new HelmCommonServicesStack(app, 'BapHelmCommonServicesStack', {
     config: config,
     eksCluster: eksStack.cluster,
     service: 'bap',
     env,
   });
 
-  new HelmCommonServicesStack(app, 'HelmBAPStack', {
+  new HelmCommonServicesStack(app, 'BppHelmCommonServicesStack', {
     config: config,
     eksCluster: eksStack.cluster,
     service: 'bpp',

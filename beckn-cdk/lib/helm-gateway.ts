@@ -17,7 +17,7 @@ export class HelmGatewayStack extends Stack {
     super(scope, id, props);
 
     const eksCluster = props.eksCluster;
-    const externalDomain = props.config.EXTERNAL_DOMAIN;
+    const externalDomain = props.config.GATEWAY_EXTERNAL_DOMAIN;
     const certArn = props.config.CERT_ARN;
     const registryUrl = props.config.REGISTRY_URL;
 
