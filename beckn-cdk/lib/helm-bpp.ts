@@ -36,7 +36,7 @@ export class HelmBppStack extends Stack {
 
     new helm.HelmChart(this, 'Bpphelm', {
       cluster: eksCluster,
-      chart: 'beckn-onix-bap',
+      chart: 'beckn-onix-bpp',
       release: releaseName,
       wait: false,
       repository: repository,
@@ -45,21 +45,22 @@ export class HelmBppStack extends Stack {
           isSandbox: isSandbox,
           externalDomain: externalDomain,
           registry_url: registryUrl,
-          bap: {
+          bpp: {
             privateKey: bppPrivateKey,
             publicKey: bppPublicKey,
           },
           efs: {
             fileSystemId: efsBppFileSystemId.fileSystemId,
           },
-        },
-        ingress: {
-          tls: {
-            certificateArn: certArn,
+          ingress: {
+            tls: {
+              certificateArn: certArn,
           },
         },
       },
-    });
+    },
+  } 
+  );
     new cdk.CfnOutput(this, String("EksFileSystemId"), {
         value: efsBppFileSystemId.fileSystemId,
     });

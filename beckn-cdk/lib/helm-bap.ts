@@ -51,14 +51,15 @@ export class HelmBapStack extends Stack {
           efs: {
             fileSystemId: efsBapFileSystemId.fileSystemId,
           },
-        },
-        ingress: {
-          tls: {
-            certificateArn: certArn,
+          ingress: {
+            tls: {
+              certificateArn: certArn,
           },
         },
       },
-    });
+    },
+  }
+);
     
     new cdk.CfnOutput(this, String("EksFileSystemId"), {
         value: efsBapFileSystemId.fileSystemId,

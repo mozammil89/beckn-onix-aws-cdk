@@ -2,7 +2,6 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as cdk from 'aws-cdk-lib';
-
 import { KubectlV30Layer } from '@aws-cdk/lambda-layer-kubectl-v30';
 // import { CfnAutoScalingGroup } from 'aws-cdk-lib/aws-autoscaling';
 import { Construct } from 'constructs';
@@ -111,6 +110,7 @@ export class EksStack extends cdk.Stack {
 
     // Attach a managed policy to the role
     oidcEKSCSIRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonEBSCSIDriverPolicy"))
+    oidcEKSCSIRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonEFSCSIDriverPolicy"))
 
     const ebscsi = new eks.CfnAddon(this, "addonEbsCsi",
         {
