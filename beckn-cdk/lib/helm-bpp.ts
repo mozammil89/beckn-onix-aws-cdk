@@ -32,23 +32,42 @@ export class HelmBppStack extends Stack {
     const isSandbox = props.isSandbox;
 
     let efsBppFileSystemId;
-    const existingFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
-
-    if(existingFileSystemId){
-      efsBppFileSystemId = existingFileSystemId;
-    } else{
+    try{
+      efsBppFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
+      if (!efsBppFileSystemId) {
+          throw new Error('Export EfsBppFileSystemId does not exist.');
+      }
+    } catch(error) {
       const efsBppFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
         vpc: props.vpc,
         securityGroup: props.eksSecGrp,
       });
 
       efsBppFileSystemId = efsBppFileSystem.fileSystemId;
-
       new cdk.CfnOutput(this, 'EfsBppFileSystemId', {
         value: efsBppFileSystemId,
         exportName: 'EfsBppFileSystemId',
-      })
+    });
     }
+
+    // let efsBppFileSystemId: string | undefined;
+    // const existingFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
+
+    // if(existingFileSystemId){
+    //   efsBppFileSystemId = existingFileSystemId;
+    // } else{
+    //   const efsBppFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+    //     vpc: props.vpc,
+    //     securityGroup: props.eksSecGrp,
+    //   });
+
+    //   efsBppFileSystemId = efsBppFileSystem.fileSystemId;
+
+    //   new cdk.CfnOutput(this, 'EfsBppFileSystemId', {
+    //     value: efsBppFileSystemId,
+    //     exportName: 'EfsBppFileSystemId',
+    //   })
+    // }
 
     // const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
     //   vpc: props.vpc,
@@ -81,8 +100,8 @@ export class HelmBppStack extends Stack {
     },
   } 
   );
-    // new cdk.CfnOutput(this, String("EksFileSystemId"), {
-    //     value: efsBppFileSystemId,
-    // });
+    new cdk.CfnOutput(this, String("EksFileSystemId"), {
+        value: efsBppFileSystemId,
+    });
   }
 }
