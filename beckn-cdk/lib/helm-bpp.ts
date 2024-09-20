@@ -11,6 +11,7 @@ interface HelmBppStackProps extends StackProps {
   config: ConfigProps;
   vpc: ec2.Vpc;
   isSandbox: boolean;
+  eksSecGrp: ec2.SecurityGroup;
   eksCluster: eks.Cluster;
 }
 
@@ -30,13 +31,33 @@ export class HelmBppStack extends Stack {
 
     const isSandbox = props.isSandbox;
 
-    const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
-      vpc: props.vpc,
-    });
+    let efsBppFileSystemId;
+    const existingFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
+
+    if(existingFileSystemId){
+      efsBppFileSystemId = existingFileSystemId;
+    } else{
+      const efsBppFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+        vpc: props.vpc,
+        securityGroup: props.eksSecGrp,
+      });
+
+      efsBppFileSystemId = efsBppFileSystem.fileSystemId;
+
+      new cdk.CfnOutput(this, 'EfsBppFileSystemId', {
+        value: efsBppFileSystemId,
+        exportName: 'EfsBppFileSystemId',
+      })
+    }
+
+    // const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+    //   vpc: props.vpc,
+    //   securityGroup: props.eksSecGrp,
+    // });
 
     new helm.HelmChart(this, 'Bpphelm', {
       cluster: eksCluster,
-      chart: 'beckn-onix-bap',
+      chart: 'beckn-onix-Bpp',
       release: releaseName,
       wait: false,
       repository: repository,
@@ -45,23 +66,23 @@ export class HelmBppStack extends Stack {
           isSandbox: isSandbox,
           externalDomain: externalDomain,
           registry_url: registryUrl,
-          bap: {
+          bpp: {
             privateKey: bppPrivateKey,
             publicKey: bppPublicKey,
           },
           efs: {
-            fileSystemId: efsBppFileSystemId.fileSystemId,
+            fileSystemId: efsBppFileSystemId,
           },
-        },
-        ingress: {
-          tls: {
-            certificateArn: certArn,
+          ingress: {
+            tls: {
+              certificateArn: certArn,
+            },
           },
-        },
+        }
       },
     });
-    new cdk.CfnOutput(this, String("EksFileSystemId"), {
-        value: efsBppFileSystemId.fileSystemId,
-    });
+    // new cdk.CfnOutput(this, String("EksFileSystemId"), {
+    //     value: efsBppFileSystemId,
+    // });
   }
 }

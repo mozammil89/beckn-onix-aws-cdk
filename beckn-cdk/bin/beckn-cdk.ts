@@ -92,6 +92,7 @@ const deployBAP = () => {
     config: config,
     eksCluster: eksStack.cluster,
     vpc: vpcStack.vpc,
+    eksSecGrp: eksStack.eksSecGrp,
     isSandbox: false,
     env,
   });
@@ -119,6 +120,7 @@ const deployBPP = () => {
   new HelmBppStack(app, 'HelmBppStack', {
     config: config,
     eksCluster: eksStack.cluster,
+    eksSecGrp: eksStack.eksSecGrp,
     vpc: vpcStack.vpc,
     isSandbox: false,
     env,
@@ -172,6 +174,7 @@ const deploySandbox = () => {
     config: config,
     eksCluster: eksStack.cluster,
     vpc: vpcStack.vpc,
+    eksSecGrp: eksStack.eksSecGrp,
     isSandbox: true,
     env,
   });
@@ -180,6 +183,7 @@ const deploySandbox = () => {
     config: config,
     eksCluster: eksStack.cluster,
     vpc: vpcStack.vpc,
+    eksSecGrp: eksStack.eksSecGrp,
     isSandbox: true,
     env,
   });

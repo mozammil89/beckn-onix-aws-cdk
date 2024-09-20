@@ -15,6 +15,7 @@ export interface EksStackProps extends cdk.StackProps {
 
 export class EksStack extends cdk.Stack {
   public readonly cluster: eks.Cluster;
+  public readonly eksSecGrp: ec2.SecurityGroup;
   
 
   constructor(scope: Construct, id: string, props: EksStackProps) {
@@ -41,15 +42,6 @@ export class EksStack extends cdk.Stack {
         "Allow EKS traffic"
     );
 
-
-    // const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
-    //   assumedBy: new iam.ServicePrincipal('eks.amazonaws.com'),
-    // });
-
-    // const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
-    //   assumedBy: new iam.AccountRootPrincipal(),
-    // });
-
     const iamRole = iam.Role.fromRoleArn(this, "MyIAMRole", ROLE_ARN);
 
     // Create the EKS cluster
@@ -75,20 +67,6 @@ export class EksStack extends cdk.Stack {
           repository: "public.ecr.aws/eks/aws-load-balancer-controller",
         },
     });
-
-    // const clusterAdminGroup = new iam.Group(this, 'ClusterAdminGroup');
-
-    // this.cluster.grantAccess('clusterAdminAccess', clusterAdminGroup.roleArn, [
-    //   eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
-    //     accessScopeType: eks.AccessScopeType.CLUSTER,
-    //   }),
-    // ]);
-
-    // const eksUser = new iam.User(this, 'EksUser');
-    // this.cluster.awsAuth.addUserMapping(eksUser, {
-    //   groups: ['system:masters'],
-    //   username: eksUser.userName,
-    // });
 
     const key1 = this.cluster.openIdConnectProvider.openIdConnectProviderIssuer;
     const stringEquals = new cdk.CfnJson(this, 'ConditionJson', {
@@ -128,57 +106,6 @@ export class EksStack extends cdk.Stack {
         }
     );
 
-
-    // const accessPolicy = eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
-    //   accessScopeType: eks.AccessScopeType.CLUSTER,
-    // })
-
-    // const clusterAdminRole = new iam.Role(this, 'ClusterAdminRole', {
-    //       assumedBy: new iam.ServicePrincipal('eks.amazonaws.com'),
-    // });
-
-    // const clusterAdminGroup = new iam.Group(this, 'EKSClusterAdminGroup');
-
-    // const eksAdminPolicy = new iam.Policy(this, 'EKSAdminPolicy', {
-    //   statements: [
-    //     new iam.PolicyStatement({
-    //       actions: [
-    //         'eks:DescribeCluster',
-    //         'eks:CreateCluster',
-    //         'eks:DeleteCluster',
-    //         'eks:UpdateClusterConfig',
-    //       ],
-    //       resources: [this.cluster.clusterArn],
-    //     }),
-    //   ],
-    // });
-
-    // // Attach the policy to the group
-    // clusterAdminGroup.attachInlinePolicy(eksAdminPolicy);
-
-
-
-    // clusterAdminGroup.addToRole(clusterAdminRole);
-    // clusterAdminGroup.add
-
-    
-
-    // const accessEntry = new eks.AccessEntry(this, 'MyAccessEntry', {
-    //   accessPolicies: [accessPolicy],
-    //   cluster: this.cluster,
-    //   principal: clusterAdminRole.roleArn,
-
-    //   // the properties below are optional
-    //   accessEntryName: 'accessEntryName',
-    //   accessEntryType: eks.AccessEntryType.STANDARD,
-    // });
-
-    // this.cluster.grantAccess('clusterAdminAccess', clusterAdminRole.roleArn, [
-    //   eks.AccessPolicy.fromAccessPolicyName('AmazonEKSClusterAdminPolicy', {
-    //     accessScopeType: eks.AccessScopeType.CLUSTER,
-    //   }),
-    // ]);
-
     new cdk.CfnOutput(this, String("OIDC-issuer"), {
         value: this.cluster.clusterOpenIdConnectIssuer,
     });
@@ -193,5 +120,7 @@ export class EksStack extends cdk.Stack {
     new cdk.CfnOutput(this, "EKS Cluster Arn", {
         value: this.cluster.clusterArn,
     });
+
+    this.eksSecGrp = securityGroupEKS;
   }
 }

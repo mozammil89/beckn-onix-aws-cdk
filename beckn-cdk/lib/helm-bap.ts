@@ -11,6 +11,7 @@ interface HelmBapStackProps extends StackProps {
   config: ConfigProps;
   eksCluster: eks.Cluster;
   isSandbox: boolean;
+  eksSecGrp: ec2.SecurityGroup;
   vpc: ec2.Vpc;
 }
 
@@ -29,9 +30,29 @@ export class HelmBapStack extends Stack {
 
     const isSandbox = props.isSandbox;
 
-    const efsBapFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
-      vpc: props.vpc,
-    });
+    let efsBapFileSystemId;
+    const existingFileSystemId = cdk.Fn.importValue('EfsBapFileSystemId');
+
+    if(existingFileSystemId){
+      efsBapFileSystemId = existingFileSystemId;
+    } else{
+      const efsBapFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
+        vpc: props.vpc,
+        securityGroup: props.eksSecGrp,
+      });
+
+      efsBapFileSystemId = efsBapFileSystem.fileSystemId;
+
+      new cdk.CfnOutput(this, 'EfsBapFileSystemId', {
+        value: efsBapFileSystemId,
+        exportName: 'EfsBapFileSystemId',
+      })
+    }
+
+    // const efsBapFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
+    //   vpc: props.vpc,
+    //   securityGroup: props.eksSecGrp,
+    // });
     
     new helm.HelmChart(this, 'baphelm', {
       cluster: eksCluster,
@@ -49,19 +70,19 @@ export class HelmBapStack extends Stack {
             publicKey: bapPublicKey,
           },
           efs: {
-            fileSystemId: efsBapFileSystemId.fileSystemId,
+            fileSystemId: efsBapFileSystemId,
           },
-        },
-        ingress: {
-          tls: {
-            certificateArn: certArn,
+          ingress: {
+            tls: {
+              certificateArn: certArn,
+            },
           },
-        },
+        }
       },
     });
     
-    new cdk.CfnOutput(this, String("EksFileSystemId"), {
-        value: efsBapFileSystemId.fileSystemId,
-    });
+    // new cdk.CfnOutput(this, String("EksFileSystemId"), {
+    //     value: efsBapFileSystemId,
+    // });
   }
 }
