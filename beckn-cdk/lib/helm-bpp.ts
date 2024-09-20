@@ -11,6 +11,7 @@ interface HelmBppStackProps extends StackProps {
   config: ConfigProps;
   vpc: ec2.Vpc;
   isSandbox: boolean;
+  eksSecGrp: ec2.SecurityGroup;
   eksCluster: eks.Cluster;
 }
 
@@ -30,9 +31,28 @@ export class HelmBppStack extends Stack {
 
     const isSandbox = props.isSandbox;
 
-    const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
-      vpc: props.vpc,
-    });
+    let efsBppFileSystemId;
+    const existingFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
+
+    if(existingFileSystemId){
+      efsBppFileSystemId = existingFileSystemId;
+    } else{
+      const efsBppFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+        vpc: props.vpc,
+        securityGroup: props.eksSecGrp,
+      });
+
+      efsBppFileSystemId = efsBppFileSystem.fileSystemId;
+
+      new cdk.CfnOutput(this, 'EfsBppFileSystemId', {
+        value: efsBppFileSystemId,
+        exportName: 'EfsBppFileSystemId',
+      })
+    }
+
+    // const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+    //   vpc: props.vpc,
+    // });
 
     new helm.HelmChart(this, 'Bpphelm', {
       cluster: eksCluster,
@@ -50,7 +70,7 @@ export class HelmBppStack extends Stack {
             publicKey: bppPublicKey,
           },
           efs: {
-            fileSystemId: efsBppFileSystemId.fileSystemId,
+            fileSystemId: efsBppFileSystemId,
           },
           ingress: {
             tls: {
@@ -61,8 +81,8 @@ export class HelmBppStack extends Stack {
     },
   } 
   );
-    new cdk.CfnOutput(this, String("EksFileSystemId"), {
-        value: efsBppFileSystemId.fileSystemId,
-    });
+    // new cdk.CfnOutput(this, String("EksFileSystemId"), {
+    //     value: efsBppFileSystemId,
+    // });
   }
 }
