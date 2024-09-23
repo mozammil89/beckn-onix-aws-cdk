@@ -6,6 +6,7 @@ import { Construct } from 'constructs';
 import { ConfigProps } from './config';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as efs from 'aws-cdk-lib/aws-efs';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 interface HelmBppStackProps extends StackProps {
   config: ConfigProps;
@@ -31,47 +32,28 @@ export class HelmBppStack extends Stack {
 
     const isSandbox = props.isSandbox;
 
-    let efsBppFileSystemId;
-    try{
-      efsBppFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
-      if (!efsBppFileSystemId) {
-          throw new Error('Export EfsBppFileSystemId does not exist.');
-      }
-    } catch(error) {
-      const efsBppFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
-        vpc: props.vpc,
-        securityGroup: props.eksSecGrp,
-      });
-
-      efsBppFileSystemId = efsBppFileSystem.fileSystemId;
-      new cdk.CfnOutput(this, 'EfsBppFileSystemId', {
-        value: efsBppFileSystemId,
-        exportName: 'EfsBppFileSystemId',
+    const myFileSystemPolicy = new iam.PolicyDocument({
+      statements: [new iam.PolicyStatement({
+        actions: [
+          'elasticfilesystem:ClientRootAccess',
+          'elasticfilesystem:ClientWrite',
+          'elasticfilesystem:ClientMount',
+        ],
+        principals: [new iam.ArnPrincipal('*')],
+        resources: ['*'],
+        conditions: {
+          Bool: {
+            'elasticfilesystem:AccessedViaMountTarget': 'true',
+          },
+        },
+      })],
     });
-    }
 
-    // let efsBppFileSystemId: string | undefined;
-    // const existingFileSystemId = cdk.Fn.importValue('EfsBppFileSystemId');
-
-    // if(existingFileSystemId){
-    //   efsBppFileSystemId = existingFileSystemId;
-    // } else{
-    //   const efsBppFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
-    //     vpc: props.vpc,
-    //     securityGroup: props.eksSecGrp,
-    //   });
-
-    //   efsBppFileSystemId = efsBppFileSystem.fileSystemId;
-
-    //   new cdk.CfnOutput(this, 'EfsBppFileSystemId', {
-    //     value: efsBppFileSystemId,
-    //     exportName: 'EfsBppFileSystemId',
-    //   })
-    // }
-
-    // const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
-    //   vpc: props.vpc,
-    // });
+    const efsBppFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bpp', {
+      vpc: props.vpc,
+      securityGroup: props.eksSecGrp,
+      fileSystemPolicy: myFileSystemPolicy,
+    });
 
     new helm.HelmChart(this, 'Bpphelm', {
       cluster: eksCluster,
@@ -89,7 +71,7 @@ export class HelmBppStack extends Stack {
             publicKey: bppPublicKey,
           },
           efs: {
-            fileSystemId: efsBppFileSystemId,
+            fileSystemId: efsBppFileSystemId.fileSystemId,
           },
           ingress: {
             tls: {
@@ -101,7 +83,7 @@ export class HelmBppStack extends Stack {
   } 
   );
     new cdk.CfnOutput(this, String("EksFileSystemId"), {
-        value: efsBppFileSystemId,
+        value: efsBppFileSystemId.fileSystemId,
     });
   }
 }

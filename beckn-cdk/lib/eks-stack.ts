@@ -38,7 +38,13 @@ export class EksStack extends cdk.Stack {
         ec2.Peer.ipv4(cidr),
         ec2.Port.allTraffic(),
         "Allow EKS traffic"
+
     );
+    // securityGroupEKS.addIngressRule(
+    //     ec2.Peer.securityGroupId(securityGroupEKS.securityGroupId),
+    //     ec2.Port.allTraffic(),
+    //     "Allow EKS traffic"
+    // );
 
     const iamRole = iam.Role.fromRoleArn(this, "MyIAMRole", ROLE_ARN);
 
@@ -46,7 +52,7 @@ export class EksStack extends cdk.Stack {
     this.cluster = new eks.Cluster(this, 'EksCluster', {
         vpc: vpc,
         vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
-        // defaultCapacity: config.EC2_NODES_COUNT,
+        defaultCapacity: 0,
         // defaultCapacityInstance: new ec2.InstanceType(config.EC2_INSTANCE_TYPE),
         kubectlLayer: new KubectlV30Layer(this, 'KubectlLayer'),
         version: eks.KubernetesVersion.V1_30,

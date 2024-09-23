@@ -47,9 +47,9 @@ export const getConfig = (): ConfigProps => ({
     CERT_ARN: process.env.CERT_ARN || "", // user must provide it
     REGISTRY_URL: process.env.REGISTRY_URL || "", // beckn-onix reg url
     EKS_CLUSTER_NAME: process.env.EKS_CLUSTER_NAME || "beckn-onix",
-    CIDR: process.env.CIDR || "10.0.0.0/16",
+    CIDR: process.env.CIDR || "10.20.0.0/16",
     EC2_NODES_COUNT: Number(process.env.EC2_NODES_COUNT) || 2,
-    EC2_INSTANCE_TYPE: process.env.EC2_INSTANCE_TYPE || "t3.medium",
+    EC2_INSTANCE_TYPE: process.env.EC2_INSTANCE_TYPE || "t3.large",
     ROLE_ARN: process.env.ROLE_ARN || "",
     DOCDB_PASSWORD: process.env.DOCDB_PASSWORD || "",
     RABBITMQ_PASSWORD: process.env.RABBITMQ_PASSWORD || "",

@@ -6,6 +6,8 @@ import { Construct } from 'constructs';
 import { ConfigProps } from './config';
 import * as efs from 'aws-cdk-lib/aws-efs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+
 
 interface HelmBapStackProps extends StackProps {
   config: ConfigProps;
@@ -30,24 +32,28 @@ export class HelmBapStack extends Stack {
 
     const isSandbox = props.isSandbox;
 
-    let efsBapFileSystemId;
-    try{
-      efsBapFileSystemId = cdk.Fn.importValue('EfsBapFileSystemId');
-      if (!efsBapFileSystemId) {
-          throw new Error('Export EfsBapFileSystemId does not exist.');
-      }
-    } catch(error) {
-      const efsBapFileSystem = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
-        vpc: props.vpc,
-        securityGroup: props.eksSecGrp,
-      });
-
-      efsBapFileSystemId = efsBapFileSystem.fileSystemId;
-      new cdk.CfnOutput(this, 'EfsBapFileSystemId', {
-        value: efsBapFileSystemId,
-        exportName: 'EfsBapFileSystemId',
+    const myFileSystemPolicy = new iam.PolicyDocument({
+      statements: [new iam.PolicyStatement({
+        actions: [
+          'elasticfilesystem:ClientRootAccess',
+          'elasticfilesystem:ClientWrite',
+          'elasticfilesystem:ClientMount',
+        ],
+        principals: [new iam.ArnPrincipal('*')],
+        resources: ['*'],
+        conditions: {
+          Bool: {
+            'elasticfilesystem:AccessedViaMountTarget': 'true',
+          },
+        },
+      })],
     });
-    }
+
+    const efsBapFileSystemId = new efs.FileSystem(this, 'Beckn-Onix-Bap', {
+      vpc: props.vpc,
+      securityGroup: props.eksSecGrp,
+      fileSystemPolicy: myFileSystemPolicy,
+    });
 
     // let efsBapFileSystemId: string | undefined;
     // const existingFileSystemId = cdk.Fn.importValue('EfsBapFileSystemId');
@@ -88,7 +94,7 @@ export class HelmBapStack extends Stack {
             publicKey: bapPublicKey,
           },
           efs: {
-            fileSystemId: efsBapFileSystemId,
+            fileSystemId: efsBapFileSystemId.fileSystemId,
           },
           ingress: {
             tls: {
@@ -101,7 +107,7 @@ export class HelmBapStack extends Stack {
 );
     
     new cdk.CfnOutput(this, String("EksFileSystemId"), {
-        value: efsBapFileSystemId,
+        value: efsBapFileSystemId.fileSystemId,
     });
   }
 }
