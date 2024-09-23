@@ -23,7 +23,7 @@ export class HelmCommonServicesStack extends Stack {
         const namespace = props.config.NAMESPACE;
 
         const generateRandomPassword = (length: number) => {
-            return crypto.randomBytes(length).toString('base64').slice(0, length);
+            return crypto.randomBytes(length).toString('hex').slice(0, length);
         };
         const rabbitMQPassword = generateRandomPassword(12);
 
@@ -77,10 +77,14 @@ export class HelmCommonServicesStack extends Stack {
                 },
                 auth: {
                     username: "beckn",
-                    password: rabbitMQPassword
+                    password: "beckn1234"
                 }
             }
         });
+
+        // new cdk.CfnOutput(this, String("RabbimqPassword"), {
+        //     value: rabbitMQPassword,
+        // });
 
     }
 }
