@@ -41,18 +41,35 @@ Once a certificate is issued, copy the certificate ARN to be used in the Helm ch
 ## Configuring AWS CLI 
 Crucial step in working with AWS CDK. You can do it in your local environment.If you prefer to configure AWS CLI on a remote server, you can SSH-ing into the server and running aws configure to set up the CLI credentials and configuration. Just ensure that the server has network connectivity to AWS services and that you have the necessary permissions to configure AWS CLI and access AWS resources from that server.
 
-## AWS CDK Stack Overview
+## Beckn-ONIX CDK Project Overview
 
-The CDK comprises stacks designed to perform unique provisioning steps, making the overall automation modular. Here is an overview of all the stacks along with the actions they perform:
+The AWS CDK project follows a specific folder structure for better organization:
 
-| CDK Stack Name |        File Name/Path                   | Description |
-| -------------- |        --------------                   | ----------- |
-| vpcalbstack    |  Filler for the actual file name        | This stack creates the VPC in which your resources will be deployed, along with one public subnet and 2 private subnets. |     
-| rdsstack       | Filler for the actual file name         | This stack creates a PostgreSQL Aurora database cluster
-| eksstack       | Filler for the actual file name         | To create EKS EC2 Cluster
-| redisstack     | Filler for the atual file name          | This stack will create a redis cluster
-| documentdbstack| Filler for the actual file name         | This stack will create a documentDB cluster
-| rabbitmqstack  | Filler for the actual file name         | This stack will create a rabbitmq broker
+- **lib/**: This folder contains all the CDK stacks. Each stack represents a set of AWS resources that are deployed together.
+- **bin/**: This folder contains the `beckn-cdk.ts` file, which serves as the entry point to the CDK application.
+- **config.ts**: Located in the `lib/` folder, this file holds all the necessary environment variables for your stacks.
+- **.env**: This file is located in the root of the AWS CDK project and contains user-specific environment variables.
+
+### CDK Stacks Overview
+
+| CDK Stack Name       | Description                                                                                       |
+|----------------------|---------------------------------------------------------------------------------------------------|
+| VpcStack             | This stack creates the VPC in which your resources will be deployed, along with one public subnet and two private subnets. |
+| EksStack             | This stack creates an Amazon EKS (Elastic Kubernetes Service) cluster for deploying Kubernetes applications. |
+| RdsStack             | This stack creates a PostgreSQL Aurora database cluster for your application's data storage needs. |
+| HelmRegistryStack    | This stack deploys Beckn-Onix Registry helm charts.                                              |
+| HelmGatewayStack     | This stack deploys Beckn-Onix Gateway helm charts.                                               |
+| HelmBapStack         | This stack deploys Beckn-Onix BAP helm charts.                                                  |
+| HelmBppStack         | This stack deploys Beckn-Onix BPP helm charts.                                                  |
+| HelmCommonServicesStack | This stack deploys common services (Redis, Mongo, and RabbitMQ) from the open-source Bitnami repository into the Amazon EKS cluster required for BAP and BPP services. |
+
+### Optional Stacks
+
+| CDK Stack Name       | Description                                                                                       |
+|----------------------|---------------------------------------------------------------------------------------------------|
+| RedisStack           | This stack creates a Redis cluster for caching and data storage needs.                           |
+| DocumentDbStack      | This stack creates a DocumentDB cluster for document storage and retrieval.                      |
+| RabbitMqStack        | This stack creates a RabbitMQ broker for managing message queues and pub/sub messaging.          |
 
 ## AWS CDK ENVIRONMENT VARIABLES
 
