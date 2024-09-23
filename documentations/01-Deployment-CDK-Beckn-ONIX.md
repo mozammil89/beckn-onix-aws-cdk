@@ -71,7 +71,7 @@ The AWS CDK project follows a specific folder structure for better organization:
 | DocumentDbStack      | This stack creates a DocumentDB cluster for document storage and retrieval.                      |
 | RabbitMqStack        | This stack creates a RabbitMQ broker for managing message queues and pub/sub messaging.          |
 
-## AWS CDK ENVIRONMENT VARIABLES
+## AWS CDK Environment Variables
 
 **Note:** Depending on the Beckn-ONIX component you wish to install, please update the `.env` file with the respective environment variables.
 
@@ -119,7 +119,7 @@ The AWS CDK project follows a specific folder structure for better organization:
 | `BPP_PRIVATE_KEY`             | Private key for the BPP                               | `pivurna3jQBmZGZeeOssgvD0NqMUuWedGjnM9U+hf8i5GXy3eoHVP7ZNs0CL+m7WB/Lq7L2/NvdPdiJWt9kjOQ==` |
 | `BPP_PUBLIC_KEY`              | Public key for the BPP                               | `uRl8t3qB1T+2TbNAi/pu1gfy6uy9vzb3T3YiVrfZIzk=`          |
 | `CERT_ARN`                   | SSL certificate ARN (AWS Certificate Manager)         | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
-                                                        |
+                                                        
 
 
 ## Deploy CDK
