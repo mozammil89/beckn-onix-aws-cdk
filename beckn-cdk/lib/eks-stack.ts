@@ -46,8 +46,8 @@ export class EksStack extends cdk.Stack {
     this.cluster = new eks.Cluster(this, 'EksCluster', {
         vpc: vpc,
         vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
-        defaultCapacity: config.EC2_NODES_COUNT,
-        defaultCapacityInstance: new ec2.InstanceType(config.EC2_INSTANCE_TYPE),
+        // defaultCapacity: config.EC2_NODES_COUNT,
+        // defaultCapacityInstance: new ec2.InstanceType(config.EC2_INSTANCE_TYPE),
         kubectlLayer: new KubectlV30Layer(this, 'KubectlLayer'),
         version: eks.KubernetesVersion.V1_30,
         securityGroup: securityGroupEKS,
@@ -118,6 +118,24 @@ export class EksStack extends cdk.Stack {
     });
     new cdk.CfnOutput(this, "EKS Cluster Arn", {
         value: this.cluster.clusterArn,
+    });
+
+    const launchTemplate = new ec2.CfnLaunchTemplate(this, 'MyLaunchTemplate', {
+        launchTemplateData: {
+            instanceType: config.EC2_INSTANCE_TYPE,
+            securityGroupIds: [this.cluster.clusterSecurityGroupId, securityGroupEKS.securityGroupId],
+        }
+    });
+  
+    // Create node group using the launch template
+    this.cluster.addNodegroupCapacity('CustomNodeGroup', {
+        amiType: eks.NodegroupAmiType.AL2_X86_64,
+        desiredSize: config.EC2_NODES_COUNT,
+        launchTemplateSpec: {
+            id: launchTemplate.ref,
+            version: launchTemplate.attrLatestVersionNumber,
+        },
+        subnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
     });
 
     this.eksSecGrp = securityGroupEKS;

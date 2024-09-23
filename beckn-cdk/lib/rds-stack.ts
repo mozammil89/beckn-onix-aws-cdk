@@ -50,7 +50,7 @@ export class RdsStack extends cdk.Stack {
         version: rds.AuroraPostgresEngineVersion.VER_14_6,
       }),
       credentials: rds.Credentials.fromSecret(creds),
-      instances: 2,
+      instances: 1,
       instanceProps: {
         vpc: props.vpc,
         vpcSubnets: {
