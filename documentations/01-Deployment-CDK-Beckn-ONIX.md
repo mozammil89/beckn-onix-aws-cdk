@@ -1,9 +1,52 @@
-## Prerequisites:
+# Beckn-ONIX AWS CDK
 
-Configuring AWS CLI is a crucial step in working with AWS CDK. You can do it in your local environment.If you prefer to configure AWS CLI on a remote server, you can SSH-ing into the server and running aws configure to set up the CLI credentials and configuration. Just ensure that the server has network connectivity to AWS services and that you have the necessary permissions to configure AWS CLI and access AWS resources from that server.
-One way of installing the AWS CDK CLI is by using the node package manager. You can install it globally by using the following command:
+This repository contains AWS CDK stacks for deploying the Beckn-ONIX services on AWS using the open-source AWS CDK IaC. The AWS CDK stacks are designed to deploy the following services:
 
-`npm install -g aws-cdk`
+- **Registry**: Manages Beckn service providers and categories, and provides an additional layer of trust on the network by listing platforms that are compliant to a network’s rules and policies.
+- **Gateway**: Central point for routing Beckn messages between providers and participants.
+- **BAP (Beckn Application Platform)**: A consumer-facing infrastructure which captures consumers’ requests via its UI applications, converts them into beckn-compliant schemas and APIs at the server side, and fires them at the network.
+- **BPP (Beckn Provider Platform)**: Other side of the network is the supply side which consists of Beckn Provider Platforms (BPPs) that maintain an active inventory, one or more catalogs of products and services, implement the supply logic and enable fulfillment of orders.
+
+![AWS CDK FLow](images/AWS-CDK-Flow.png)
+
+
+## Prerequisites
+
+- **Amazon EKS Requirements**:
+  - [**Load Balancer Controller**](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html): Required for **Registry** and **Gateway**.
+  - [**EBS CSI Driver**](https://docs.aws.amazon.com/eks/latest/userguide/pv-csi.html) and [**EFS CSI Driver**](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html): Required for **BAP** and **BPP**.
+  
+  If deploying all Beckn-ONIX components on the same EKS cluster, all three add-ons are necessary.
+
+- **AWS Account**: An AWS account to deploy AWS CDK stacks
+- **AWS CLI**: Configured with AWS account
+- **Kubectl Client**: Configured with the Amazon EKS cluster.
+- **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
+
+
+### Domain and Subdomains
+
+Beckn-ONIX requires a public domain to be associated with the following services:
+
+- Registry
+- Gateway
+- BAP Network
+- BPP Network
+
+Users must obtain a public domain and create subdomains for each service. Additionally, an SSL certificate must be issued for each subdomain to enable HTTPS. You can use [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/pricing/), which provides public SSL/TLS certificates at no cost.
+
+## Requesting a Public SSL Certificate through AWS Certificate Manager
+
+Gather the list of subdomains you intend to use for Beckn-ONIX services (as outlined in the pre-requisite).
+
+To obtain an SSL certificate through AWS Certificate Manager, follow the easy steps provided in the official [AWS ACM Documentation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html).
+
+Once a certificate is issued, copy the certificate ARN to be used in the Helm charts later. The certificate ARN follows this format:
+
+`arn:aws:acm:ap-south-1:<aws-account-id>:certificate/<identifier>`
+
+## Configuring AWS CLI 
+Crucial step in working with AWS CDK. You can do it in your local environment.If you prefer to configure AWS CLI on a remote server, you can SSH-ing into the server and running aws configure to set up the CLI credentials and configuration. Just ensure that the server has network connectivity to AWS services and that you have the necessary permissions to configure AWS CLI and access AWS resources from that server.
 
 ## AWS CDK Stack Overview
 
@@ -17,32 +60,6 @@ The CDK comprises stacks designed to perform unique provisioning steps, making t
 | redisstack     | Filler for the atual file name          | This stack will create a redis cluster
 | documentdbstack| Filler for the actual file name         | This stack will create a documentDB cluster
 | rabbitmqstack  | Filler for the actual file name         | This stack will create a rabbitmq broker
-
-
-## Preparing your Environment
-
-1. Install Typescript globally for CDK. The code for that is:
-   
-   ` npm i -g typescript `
-
-2. Install the AWS CDK:
-
-   `npm i -g aws-cdk`
-
-3. Clone this repository:
-
-   `git clone <repo_url>`
-   `cd beckn-cdk`
-
-4. Install the CDK application
-
-   ` npm i`
-
-5. Bootstrap your CDK environment
-
-   `cdk bootstrap aws://<ACCOUNT-NUMBER>/<REGION>`
-
-In your folder, open the .env file using your preferred code editor. There are some mandatory environment variables that you will have to update here. The environment variables and example values along with a description are provided below:
 
 #### AWS SPECIFIC MANDATORY VARIABLES ####
 
