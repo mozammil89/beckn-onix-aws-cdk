@@ -144,6 +144,20 @@ This will deploy the following stacks: VPC, Amazon EKS, Amazon RDS Aurora Postgr
 cdk deploy --context env=gateway --all
 ```
 
+### Generate SSL Key Pair required for BAP and BPP
+
+The Protocol Server (BAP/BPP) provides a key generation script.
+
+**Note:** Ensure Node.js is installed on your system.
+
+```bash
+curl https://raw.githubusercontent.com/beckn/protocol-server/master/scripts/generate-keys.js > generate-keys.js
+npm install libsodium-wrappers
+node generate-keys.js
+```
+
+**Note:** Copy the `publicKey` and `privateKey` from the output. You need to add keys to .env file before running CDK deploy.
+
 3. **BAP (Buyer Application Provider) Environment**
 This will deploy the following stacks: VPC, Amazon EKS, BAP, and common services in Amazon EKS - Redis, DocumentDB, and RabbitMQ:
 

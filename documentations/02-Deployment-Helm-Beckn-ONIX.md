@@ -160,25 +160,39 @@ helm install -n bap-common-services rabbitmq bitnami/rabbitmq \
 --set auth.password=$(openssl rand -base64 12)
 ```
 
-#### Install Common Services for BAP
+#### Install Common Services for BPP
 For BPP, follow the same installation steps as for BAP, but with modifications specific to the BPP K8s namespace:
 
-1. **Create Namespace and Add Bitnami Helm Repository**
+1. **Create Namespace for BPP and Add Bitnami Helm Repository**
 
 ```bash
-   kubectl create namespace bap-common-services
+   kubectl create namespace bpp-common-services
    helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
-2. **Update Namespace and Re-run commands**
-
-After creating the namespace, you need to re-run the installation commands for Redis, MongoDB, and RabbitMQ from the BAP section with the namespace updated to `bpp-common-services`.
-
-Example for Redis:
+#### Install Redis
 ```bash
 helm install -n bpp-common-services redis bitnami/redis \
 --set auth.enabled=false \
 --set replica.replicaCount=0 \
---set master.persistence.storageClass="gp2"
+--set master.persistence.storageClass="gp2" 
+```
+
+#### Install MongoDB
+```bash
+helm install -n bpp-common-services mongodb bitnami/mongodb \
+--set persistence.storageClass="gp2"
+
+# To get the Mongodb root password run:
+kubectl get secret --namespace bap-common-services mongodb -o jsonpath="{.data.mongodb-root-password}" | base64 -d)
+```
+
+#### Install RabbitMQ
+```
+helm install -n bpp-common-services rabbitmq bitnami/rabbitmq \
+--set persistence.enabled=true \
+--set persistence.storageClass="gp2" \
+--set auth.username=beckn \
+--set auth.password=$(openssl rand -base64 12)
 ```
 
 ### Proceed to Install Beckn-ONIX BAP & BPP
