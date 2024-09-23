@@ -74,34 +74,33 @@ The CDK comprises stacks designed to perform unique provisioning steps, making t
 
 | Variable                      | Description                                            | Example Value                                                |
 |-------------------------------|--------------------------------------------------------|-------------------------------------------------------------|
-| `REGISTRY_URL`               | External domain for the registry                       | `registry-cdk.beckn-onix-aws-cdk.becknprotocol.io`        |
+| `REGISTRY_EXTERNAL_DOMAIN`               | External domain for the registry                       | `registry-cdk.beckn-onix-aws-cdk.becknprotocol.io`        |
+| `CERT_ARN`                   | SSL certificate ARN (AWS Certificate Manager)         | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
 
 ### Gateway
 
 | Variable                      | Description                                            | Example Value                                                |
 |-------------------------------|--------------------------------------------------------|-------------------------------------------------------------|
 | `GATEWAY_EXTERNAL_DOMAIN`     | External domain for the gateway                        | `gateway-cdk.beckn-onix-aws-cdk.becknprotocol.io`         |
+| `REGISTRY_URL`     | Registry URL                        | `gateway-cdk.beckn-onix-aws-cdk.becknprotocol.io`         |
+| `CERT_ARN`                   | SSL certificate ARN (AWS Certificate Manager)         | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
 
-### BAP (Buyer Application Provider)
+### BAP (Beckn Application Platform)
 
 | Variable                      | Description                                            | Example Value                                                |
 |-------------------------------|--------------------------------------------------------|-------------------------------------------------------------|
 | `BAP_EXTERNAL_DOMAIN`         | External domain for the BAP                           | `bap-cdk.beckn-onix-aws-cdk.becknprotocol.io`             |
 | `BAP_PRIVATE_KEY`             | Private key for the BAP                               | `pivurna3jQBmZGZeeOssgvD0NqMUuWedGjnM9U+hf8i5GXy3eoHVP7ZNs0CL+m7WB/Lq7L2/NvdPdiJWt9kjOQ==` |
 | `BAP_PUBLIC_KEY`              | Public key for the BAP                               | `uRl8t3qB1T+2TbNAi/pu1gfy6uy9vzb3T3YiVrfZIzk=`          |
+| `CERT_ARN`                   | SSL certificate ARN (AWS Certificate Manager)         | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
 
-### BPP (Buyer Platform Provider)
+### BPP (Beckn Provider Platform)
 
 | Variable                      | Description                                            | Example Value                                                |
 |-------------------------------|--------------------------------------------------------|-------------------------------------------------------------|
 | `BPP_EXTERNAL_DOMAIN`         | External domain for the BPP                           | `bpp-cdk.beckn-onix-aws-cdk.becknprotocol.io`             |
 | `BPP_PRIVATE_KEY`             | Private key for the BPP                               | `pivurna3jQBmZGZeeOssgvD0NqMUuWedGjnM9U+hf8i5GXy3eoHVP7ZNs0CL+m7WB/Lq7L2/NvdPdiJWt9kjOQ==` |
 | `BPP_PUBLIC_KEY`              | Public key for the BPP                               | `uRl8t3qB1T+2TbNAi/pu1gfy6uy9vzb3T3YiVrfZIzk=`          |
-
-### SSL Certificate
-
-| Variable                      | Description                                            | Example Value                                                |
-|-------------------------------|--------------------------------------------------------|-------------------------------------------------------------|
 | `CERT_ARN`                   | SSL certificate ARN (AWS Certificate Manager)         | `arn:aws:acm:ap-south-1:365975017663:certificate/04d1ef71-8407-495b-82f0-4eded8694189` |
                                                         |
 
@@ -115,35 +114,35 @@ After you have made the relevant updates to the `.env` file, run the following c
 You can now choose to deploy one of the following environments:
 
 1. **Registry Environment**
-This will deploy the following stacks: VPC, EKS, and RDS:
+This will deploy the following stacks: VPC, Amazon EKS, and Amazon RDS Aurora Postgres and Registry:
 
 ```bash
 cdk deploy --context env=registry --all
 ```
 
 2. **Gateway Environment**
-This will deploy the following stacks: VPC, EKS, and RDS:
+This will deploy the following stacks: VPC, Amazon EKS, Amazon RDS Aurora Postgres and Gateway:
 
 ```bash
 cdk deploy --context env=gateway --all
 ```
 
 3. **BAP (Buyer Application Provider) Environment**
-This will deploy the following stacks: VPC, EKS, Redis, DocumentDB, and RabbitMQ:
+This will deploy the following stacks: VPC, Amazon EKS, BAP, and common services in Amazon EKS - Redis, DocumentDB, and RabbitMQ:
 
 ```bash
 cdk deploy --context env=bap --all
 ```
 
 4. **BPP (Buyer Platform Provider) Environment**
-This will deploy the following stacks: VPC, EKS, Redis, DocumentDB, and RabbitMQ:
+This will deploy the following stacks: VPC, Amazon EKS, BAP, and common services in Amazon EKS - Redis, DocumentDB, and RabbitMQ:
 
 ```bash
 cdk deploy --context env=bpp -all
 ```
 
 5. **Sandbox Environment**  
-This environment is suitable for non-prod setup and will deploy all the stacks including - VPC, EKS, RDS, all Beckn-Onix services including common services:
+This environment is suitable for non-prod setup and will deploy all the stacks including - VPC, Amazon EKS, Amazon RDS Aurora Postgres, all Beckn-Onix services including common services:
 
    ```bash
    cdk deploy --context env=sandbox --all
@@ -151,7 +150,7 @@ This environment is suitable for non-prod setup and will deploy all the stacks i
 
 ## Next Steps
 
-After installing all Beckn-Onix services, proceed with the next steps to complete the setup:
+After installing all Beckn-Onix services, proceed with the next steps to verify and complete the setup:
 
 1. **[Verify Deployments](documentations/verify-deployments.md)**
 
@@ -165,7 +164,7 @@ After installing all Beckn-Onix services, proceed with the next steps to complet
 
    After updating your DNS records, you need to register your participants BAP and BPP network with the registry service. Follow the steps in the [BAP and BPP Registration](documentations/post-deployment-bap-bpp-register.md) document to complete this process.
 
-Make sure to follow the detailed steps in the linked documents to complete the setup and ensure your services are correctly configured and registered.
+
 
 
 
