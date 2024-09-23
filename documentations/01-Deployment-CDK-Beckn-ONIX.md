@@ -62,8 +62,8 @@ The CDK comprises stacks designed to perform unique provisioning steps, making t
 
 | Environment Variables |   Example value | Description |
 | --------------------- | --------------  | ----------  |
-| REGION                | ap-south-1      | The AWS region in which to deploy all the resources |
-| ACCOUNT               | 123456789123    | Your AWS 12 digit account number |
+| `REGION`                | `ap-south-1`      | The AWS region in which to deploy all the resources |
+| `ACCOUNT`               | `123456789123`    | Your AWS 12 digit account number |
 
 
 #### BECKN-ONIX SPECIFIC MANDATORY VARIABLES ####
