@@ -12,17 +12,10 @@ This repository contains AWS CDK stacks for deploying the Beckn-ONIX services on
 
 ## Prerequisites
 
-- **Amazon EKS Requirements**:
-  - [**Load Balancer Controller**](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html): Required for **Registry** and **Gateway**.
-  - [**EBS CSI Driver**](https://docs.aws.amazon.com/eks/latest/userguide/pv-csi.html) and [**EFS CSI Driver**](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html): Required for **BAP** and **BPP**.
-  
-  If deploying all Beckn-ONIX components on the same EKS cluster, all three add-ons are necessary.
-
 - **AWS Account**: An AWS account to deploy AWS CDK stacks
 - **AWS CLI**: Configured with AWS account
 - **Kubectl Client**: Configured with the Amazon EKS cluster.
 - **Public Domain/Sub-Domain**: Along with SSL certificates for HTTPS.
-
 
 ### Domain and Subdomains
 
@@ -61,6 +54,10 @@ The CDK comprises stacks designed to perform unique provisioning steps, making t
 | documentdbstack| Filler for the actual file name         | This stack will create a documentDB cluster
 | rabbitmqstack  | Filler for the actual file name         | This stack will create a rabbitmq broker
 
+## AWS CDK ENVIRONMENT VARIABLES
+
+**Note:** Depending on the Beckn-ONIX component you wish to install, please update the `.env` file with the respective environment variables.
+
 #### AWS SPECIFIC MANDATORY VARIABLES ####
 
 | Environment Variables |   Example value | Description |
@@ -68,13 +65,10 @@ The CDK comprises stacks designed to perform unique provisioning steps, making t
 | REGION                | ap-south-1      | The AWS region in which to deploy all the resources |
 | ACCOUNT               | 123456789123    | Your AWS 12 digit account number |
 
-Beckn-ONIX specific environment variables:
 
 #### BECKN-ONIX SPECIFIC MANDATORY VARIABLES ####
 
 **Note:** Depending on the Beckn-ONIX component you wish to install, please update the `.env` file with the respective environment variables.
-
----
 
 ### Registry
 
@@ -120,40 +114,40 @@ After you have made the relevant updates to the `.env` file, run the following c
 
 You can now choose to deploy one of the following environments:
 
-1. **Sandbox Environment**  
-   This will deploy all the stacks including VPC, EKS, RDS, and the microservices like Redis, DocumentDB, and RabbitMQ:
-
-   ```bash
-   cdk deploy --context env=sandbox --all
-   ```
-
-2. Registry Environment
+1. **Registry Environment**
 This will deploy the following stacks: VPC, EKS, and RDS:
 
 ```bash
 cdk deploy --context env=registry --all
 ```
 
-3. Gateway Environment
+2. **Gateway Environment**
 This will deploy the following stacks: VPC, EKS, and RDS:
 
 ```bash
 cdk deploy --context env=gateway --all
 ```
 
-4. BAP (Buyer Application Provider) Environment
+3. **BAP (Buyer Application Provider) Environment**
 This will deploy the following stacks: VPC, EKS, Redis, DocumentDB, and RabbitMQ:
 
 ```bash
 cdk deploy --context env=bap --all
 ```
 
-5. BPP (Buyer Platform Provider) Environment
+4. **BPP (Buyer Platform Provider) Environment**
 This will deploy the following stacks: VPC, EKS, Redis, DocumentDB, and RabbitMQ:
 
 ```bash
 cdk deploy --context env=bpp -all
 ```
+
+5. **Sandbox Environment**  
+This environment is suitable for non-prod setup and will deploy all the stacks including - VPC, EKS, RDS, all Beckn-Onix services including common services:
+
+   ```bash
+   cdk deploy --context env=sandbox --all
+   ```
 
 ## Next Steps
 
